@@ -34,11 +34,14 @@
 #include <cmath>
 #include <thread>
 #include "RapidXML\rapidxml.hpp"
+#include "RapidXML\rapidxml_utils.hpp"
 #include <iomanip>
 #include <sstream>
 #include <string>
 #include <ctime>
-#include <windows.h>
+#include "StringUtils.h"
+
+using namespace rapidxml;
 
 #if defined __linux__ || defined __APPLE__
 // "Compiled for Linux
@@ -472,20 +475,66 @@ int main(int argc, char **argv) {
   // This sample only allows one choice per program execution. Feel free to improve upon this
   srand(13);
 
-  // cleanup the existing images
-  //system("del /Q *.ppm");
+
   std::string directory;
   auto now = std::time(nullptr);
   std::ostringstream os;
   os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
   directory = "spheres" + os.str();
-  std::string mkdirCommand = "mkdir .\\" + directory;
 
+  std::string mkdirCommand = "mkdir .\\" + directory;
   system(mkdirCommand.c_str());
 
   //BasicRender();
   //SimpleShrinking();
   //SmoothScaling();
+
+  std::vector<Sphere> spheres;
+
+  try {
+    file<> sceneFile("scene.xml");
+    xml_document<> doc;
+    doc.parse<0>(sceneFile.data());
+    xml_node<>* rootNode = doc.first_node();
+
+    float x, y, z, radius, r, g, b, reflection, transparency, emissionR, emissionG, emissionB;
+    reflection = transparency = emissionR = emissionG = emissionB = 0.0f;
+
+    for (xml_node<>* sphereNode = rootNode->first_node(); sphereNode; sphereNode = sphereNode->next_sibling()) {
+      x = convertStringToNumber<float>(sphereNode->first_attribute("x")->value());
+      y = convertStringToNumber<float>(sphereNode->first_attribute("y")->value());
+      z = convertStringToNumber<float>(sphereNode->first_attribute("z")->value());
+      radius = convertStringToNumber<float>(sphereNode->first_attribute("radius")->value());
+      r = convertStringToNumber<float>(sphereNode->first_attribute("r")->value());
+      g = convertStringToNumber<float>(sphereNode->first_attribute("g")->value());
+      b = convertStringToNumber<float>(sphereNode->first_attribute("b")->value());
+
+      if (sphereNode->first_attribute("reflection")) {
+        reflection = convertStringToNumber<float>(sphereNode->first_attribute("reflection")->value());
+      }
+      if (sphereNode->first_attribute("transparency")) {
+        transparency = convertStringToNumber<float>(sphereNode->first_attribute("transparency")->value());
+      }
+      if (sphereNode->first_attribute("emissionR")) {
+        emissionR = convertStringToNumber<float>(sphereNode->first_attribute("emissionR")->value());
+      }
+      if (sphereNode->first_attribute("emissionG")) {
+        emissionG = convertStringToNumber<float>(sphereNode->first_attribute("emissionG")->value());
+      }
+      if (sphereNode->first_attribute("emissionB")) {
+        emissionB = convertStringToNumber<float>(sphereNode->first_attribute("emissionB")->value());
+      }
+
+      spheres.push_back(Sphere(Vec3f(x, y, z), radius, Vec3f(r, g, b), reflection, transparency, Vec3f(emissionR, emissionG, emissionB)));
+    }
+  }
+  catch (parse_error& e) {
+    ofstream errorFile;
+    errorFile.open("error_file.txt");
+    errorFile << "Error reading scene file " << ": " << e.what() << endl;
+    errorFile.close();
+    return 0;
+  }
 
   std::vector<std::thread> threads;
 
@@ -498,9 +547,7 @@ int main(int argc, char **argv) {
   }
 
   std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
-
   system(ffmpegCommand.c_str());
 
-  system("PAUSE");
   return 0;
 }
