@@ -33,6 +33,12 @@
 #include <string.h>
 #include <cmath>
 #include <thread>
+#include "RapidXML\rapidxml.hpp"
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <ctime>
+#include <windows.h>
 
 #if defined __linux__ || defined __APPLE__
 // "Compiled for Linux
@@ -201,7 +207,7 @@ Vec3f trace(
           }
         }
         surfaceColor += sphere->surfaceColor * transmission *
-          std::max(float(0), nhit.dot(lightDirection)) * spheres[i].emissionColor;
+          max(float(0), nhit.dot(lightDirection)) * spheres[i].emissionColor;
       }
     }
   }
@@ -214,7 +220,7 @@ Vec3f trace(
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void render(const std::vector<Sphere> &spheres, int iteration) {
+void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
   // quick and dirty
 #ifdef _DEBUG
   unsigned width = 640, height = 480;
@@ -243,13 +249,13 @@ void render(const std::vector<Sphere> &spheres, int iteration) {
   // Save result to a PPM image (keep these flags if you compile under Windows)
   std::stringstream ss;
   if (iteration < 10) {
-    ss << "./spheres00" << iteration << ".ppm";
+    ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
   }
   else if (iteration < 100) {
-    ss << "./spheres0" << iteration << ".ppm";
+    ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
   }
   else {
-    ss << "./spheres" << iteration << ".ppm";
+    ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
   }
   std::string tempString = ss.str();
   char* filename = (char*) tempString.c_str();
@@ -257,15 +263,15 @@ void render(const std::vector<Sphere> &spheres, int iteration) {
   std::ofstream ofs(filename, std::ios::out | std::ios::binary);
   ofs << "P6\n" << width << " " << height << "\n255\n";
   for (unsigned i = 0; i < width * height; ++i) {
-    ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
-      (unsigned char) (std::min(float(1), image[i].y) * 255) <<
-      (unsigned char) (std::min(float(1), image[i].z) * 255);
+    ofs << (unsigned char) (min(float(1), image[i].x) * 255) <<
+      (unsigned char) (min(float(1), image[i].y) * 255) <<
+      (unsigned char) (min(float(1), image[i].z) * 255);
   }
   ofs.close();
   delete[] image;
 }
 
-void BasicRender() {
+void BasicRender(std::string& directory) {
   std::vector<Sphere> spheres;
   // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
 
@@ -275,11 +281,11 @@ void BasicRender() {
   spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
 
   // This creates a file, titled 1.ppm in the current working directory
-  render(spheres, 1);
+  render(spheres, 1, directory);
 
 }
 
-void SimpleShrinking() {
+void SimpleShrinking(std::string& directory) {
   std::vector<Sphere> spheres;
   // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
 
@@ -310,13 +316,13 @@ void SimpleShrinking() {
       spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
     }
 
-    render(spheres, i);
+    render(spheres, i, directory);
     // Dont forget to clear the Vector holding the spheres.
     spheres.clear();
   }
 }
 
-void SmoothScaling() {
+void SmoothScaling(std::string& directory) {
   std::vector<Sphere> spheres;
   // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
 
@@ -325,7 +331,7 @@ void SmoothScaling() {
     spheres.push_back(Sphere(Vec3f(0.0, 0, -20), 1, Vec3f(1.00, 0.32, 0.36), 1, 0.5)); // Radius++ change here
     spheres.push_back(Sphere(Vec3f(5.0, -1, -15), 2, Vec3f(0.90, 0.76, 0.46), 1, 0.0));
     spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
-    render(spheres, r);
+    render(spheres, r, directory);
     std::cout << "Rendered and saved spheres" << r << ".ppm" << std::endl;
     // Dont forget to clear the Vector holding the spheres.
     spheres.clear();
@@ -416,7 +422,7 @@ int calcOffset(int startIndex) {
   return returnVal;
 }
 
-void moveSpheres(int startIndex, int endIndex) {
+void moveSpheres(int startIndex, int endIndex, std::string& directory) {
   std::vector<Sphere> spheres;
   // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
   spheres.push_back(Sphere(Vec3f(0.0, -10004, -20), 10000, Vec3f(0.20, 0.20, 0.20), 0, 0.0));
@@ -428,14 +434,14 @@ void moveSpheres(int startIndex, int endIndex) {
     moveX(spheres[1], r / 100.0f);
     spheres[2].center.y = sin(r * M_PI / 180.0f);
     moveZ(spheres[3], r / 100.0f);
-    render(spheres, r);
+    render(spheres, r, directory);
     std::cout << "Rendered and saved spheres" << r << ".ppm" << std::endl;
   }
   // Dont forget to clear the Vector holding the spheres.
   spheres.clear();
 }
 
-void rotateSpheres(int startIndex, int endIndex) {
+void rotateSpheres(int startIndex, int endIndex, std::string& directory) {
   std::vector<Sphere> spheres;
   // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
   spheres.push_back(Sphere(Vec3f(0.0, -10004, -20), 10000, Vec3f(0.20, 0.20, 0.20), 0, 0.0));
@@ -450,7 +456,7 @@ void rotateSpheres(int startIndex, int endIndex) {
     rotateX(spheres[1], 1.0f * M_PI / 180.0f);
     rotateY(spheres[2], 1.0f * M_PI / 180.0f);
     rotateZ(spheres[3], 1.0f * M_PI / 180.0f);
-    render(spheres, r);
+    render(spheres, r, directory);
     std::cout << "Rendered and saved spheres" << r << ".ppm" << std::endl;
   }
   // Dont forget to clear the Vector holding the spheres.
@@ -467,7 +473,15 @@ int main(int argc, char **argv) {
   srand(13);
 
   // cleanup the existing images
-  system("del / Q *.ppm");
+  //system("del /Q *.ppm");
+  std::string directory;
+  auto now = std::time(nullptr);
+  std::ostringstream os;
+  os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
+  directory = "spheres" + os.str();
+  std::string mkdirCommand = "mkdir .\\" + directory;
+
+  system(mkdirCommand.c_str());
 
   //BasicRender();
   //SimpleShrinking();
@@ -476,14 +490,17 @@ int main(int argc, char **argv) {
   std::vector<std::thread> threads;
 
   for (int i = 0; i < 8; i++) {
-    threads.push_back(std::thread(rotateSpheres, i * 45, (i * 45) + 45));
+    threads.push_back(std::thread(rotateSpheres, i * 45, (i * 45) + 45, directory));
   }
 
   for (int i = 0; i < 8; i++) {
     threads[i].join();
   }
 
-  system("ffmpeg -i spheres%03d.ppm -y out.mp4");
+  std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
 
+  system(ffmpegCommand.c_str());
+
+  system("PAUSE");
   return 0;
 }
