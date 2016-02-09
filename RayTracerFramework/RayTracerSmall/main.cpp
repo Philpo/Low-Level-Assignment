@@ -231,11 +231,11 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
   start = std::chrono::system_clock::now();
 
   // quick and dirty
-//#ifdef _DEBUG
-//  unsigned width = 640, height = 480;
-//#else
+#ifdef _DEBUG
+  unsigned width = 640, height = 480;
+#else
   unsigned width = 1920, height = 1080;
-//#endif
+#endif
   // Recommended Testing Resolution
   //unsigned width = 640, height = 480;
 
@@ -496,6 +496,7 @@ int main(int argc, char **argv) {
   //SmoothScaling();
 
   std::vector<Sphere> spheres;
+  int totalFrames, numThreads;
 
   try {
     file<> sceneFile("scene.xml");
@@ -542,13 +543,48 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  std::vector<std::thread> threads;
+  try {
+    file<> passFile("test.xml");
+    xml_document<> doc;
+    doc.parse<0>(passFile.data());
+    xml_node<>* rootNode = doc.first_node();
 
-  for (int i = 0; i < 8; i++) {
-    threads.push_back(std::thread(rotateSpheres, spheres, i * 45, (i * 45) + 45, directory));
+    totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());
+    numThreads = convertStringToNumber<int>(rootNode->first_attribute("threads")->value());
+
+    for (xml_node<>* moveNode = rootNode->first_node(); moveNode; moveNode = moveNode->next_sibling()) {
+      
+    }
+  }
+  catch (parse_error& e) {
+    ofstream errorFile;
+    errorFile.open("error_file.txt");
+    errorFile << "Error reading pass file " << ": " << e.what() << endl;
+    errorFile.close();
+    return 0;
   }
 
-  for (int i = 0; i < 8; i++) {
+  std::vector<std::thread> threads;
+
+  int threadWorkload = 0;
+  int remainder = 0;
+
+  threadWorkload = totalFrames / numThreads;
+
+  if (totalFrames % numThreads != 0) {
+    remainder = totalFrames - (threadWorkload * (numThreads - 1));
+  }
+
+  for (int i = 0; i < numThreads; i++) {
+    if (i == numThreads - 1 && remainder > 0) {
+      threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + remainder, directory));
+    }
+    else {
+      threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, directory));
+    }
+  }
+
+  for (int i = 0; i < numThreads; i++) {
     threads[i].join();
   }
 
