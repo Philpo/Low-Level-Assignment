@@ -37,6 +37,7 @@
 #include "RapidXML\rapidxml_utils.hpp"
 #include <iomanip>
 #include <ctime>
+#include <chrono>
 #include "StringUtils.h"
 
 using namespace rapidxml;
@@ -45,9 +46,14 @@ using namespace rapidxml;
 // "Compiled for Linux
 #else
 // Windows doesn't define these values by default, Linux does
-#define M_PI 3.141592653589793
-#define INFINITY 1e8
+  #define M_PI 3.141592653589793
+  #define INFINITY 1e8
 #endif
+
+std::chrono::time_point<std::chrono::system_clock> start;
+std::chrono::time_point<std::chrono::system_clock> endTime;
+std::chrono::duration<double> total_elapsed_time;
+ofstream speedResults("O1_results.txt");
 
 template<typename T>
 class Vec3 {
@@ -222,12 +228,14 @@ Vec3f trace(
 // sphere at the intersection point, else we return the background color.
 //[/comment]
 void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
+  start = std::chrono::system_clock::now();
+
   // quick and dirty
-#ifdef _DEBUG
-  unsigned width = 640, height = 480;
-#else
+//#ifdef _DEBUG
+//  unsigned width = 640, height = 480;
+//#else
   unsigned width = 1920, height = 1080;
-#endif
+//#endif
   // Recommended Testing Resolution
   //unsigned width = 640, height = 480;
 
@@ -270,6 +278,12 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
   }
   ofs.close();
   delete[] image;
+
+  endTime = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_time = endTime - start;
+  total_elapsed_time += elapsed_time;
+  std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
+  speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
 }
 
 void BasicRender(std::string& directory) {
@@ -538,8 +552,28 @@ int main(int argc, char **argv) {
     threads[i].join();
   }
 
+  start = std::chrono::system_clock::now();
   std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
   system(ffmpegCommand.c_str());
+  endTime = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_time = endTime - start;
+  total_elapsed_time += elapsed_time;
+
+  std::cout << "**********************" << std::endl;
+  std::cout << "Finished video render in " << elapsed_time.count() << std::endl;
+  std::cout << "**********************" << std::endl;
+  std::cout << "**********************" << std::endl;
+  std::cout << "Total Render Time: " << total_elapsed_time.count() << std::endl;
+  std::cout << "**********************" << std::endl;
+
+  speedResults << "**********************" << std::endl;
+  speedResults << "Finished video render in " << elapsed_time.count() << std::endl;
+  speedResults << "**********************" << std::endl;
+  speedResults << "**********************" << std::endl;
+  speedResults << "Total Render Time: " << total_elapsed_time.count() << std::endl;
+  speedResults << "**********************" << std::endl;
+
+  speedResults.close();
 
   return 0;
 }
