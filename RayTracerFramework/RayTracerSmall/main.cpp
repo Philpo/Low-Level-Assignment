@@ -36,8 +36,6 @@
 #include "RapidXML\rapidxml.hpp"
 #include "RapidXML\rapidxml_utils.hpp"
 #include <iomanip>
-#include <sstream>
-#include <string>
 #include <ctime>
 #include "StringUtils.h"
 
@@ -444,13 +442,7 @@ void moveSpheres(int startIndex, int endIndex, std::string& directory) {
   spheres.clear();
 }
 
-void rotateSpheres(int startIndex, int endIndex, std::string& directory) {
-  std::vector<Sphere> spheres;
-  // Vector structure for Sphere (position, radius, surface color, reflectivity, transparency, emission color)
-  spheres.push_back(Sphere(Vec3f(0.0, -10004, -20), 10000, Vec3f(0.20, 0.20, 0.20), 0, 0.0));
-  spheres.push_back(Sphere(Vec3f(0, 0, -20), 1, Vec3f(1.00, 0.32, 0.36), 1, 0.5)); // Radius++ change here
-  spheres.push_back(Sphere(Vec3f(5.0, -1, -15), 2, Vec3f(0.90, 0.76, 0.46), 1, 0.0));
-  spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
+void rotateSpheres(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::string& directory) {
   rotateX(spheres[1], startIndex * M_PI / 180.0f);
   rotateY(spheres[2], startIndex * M_PI / 180.0f);
   rotateZ(spheres[3], startIndex * M_PI / 180.0f);
@@ -539,7 +531,7 @@ int main(int argc, char **argv) {
   std::vector<std::thread> threads;
 
   for (int i = 0; i < 8; i++) {
-    threads.push_back(std::thread(rotateSpheres, i * 45, (i * 45) + 45, directory));
+    threads.push_back(std::thread(rotateSpheres, spheres, i * 45, (i * 45) + 45, directory));
   }
 
   for (int i = 0; i < 8; i++) {
