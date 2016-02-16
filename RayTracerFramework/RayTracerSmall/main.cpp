@@ -470,143 +470,156 @@ int main(int argc, char **argv) {
   // This sample only allows one choice per program execution. Feel free to improve upon this
   srand(13);
 
-  std::string directory;
-  auto now = std::time(nullptr);
-  std::ostringstream os;
-  os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
-  directory = "spheres" + os.str();
+  std::string spheresFilePath, movesFilePath;
 
-  std::string mkdirCommand = "mkdir .\\" + directory;
-  system(mkdirCommand.c_str());
-
-  //BasicRender();
-  //SimpleShrinking();
-  //SmoothScaling();
-
-  //std::vector<Sphere> spheres;
-  std::vector<Pass> passes;
-  int totalFrames, numThreads, passCount = 0;
-
-  try {
-    file<> sceneFile("scene.xml");
-    xml_document<> doc;
-    doc.parse<0>(sceneFile.data());
-    xml_node<>* rootNode = doc.first_node();
-
-    float x, y, z, radius, r, g, b, reflection, transparency, emissionR, emissionG, emissionB;
-    reflection = transparency = emissionR = emissionG = emissionB = 0.0f;
-
-    for (xml_node<>* sphereNode = rootNode->first_node(); sphereNode; sphereNode = sphereNode->next_sibling()) {
-      x = convertStringToNumber<float>(sphereNode->first_attribute("x")->value());
-      y = convertStringToNumber<float>(sphereNode->first_attribute("y")->value());
-      z = convertStringToNumber<float>(sphereNode->first_attribute("z")->value());
-      radius = convertStringToNumber<float>(sphereNode->first_attribute("radius")->value());
-      r = convertStringToNumber<float>(sphereNode->first_attribute("r")->value());
-      g = convertStringToNumber<float>(sphereNode->first_attribute("g")->value());
-      b = convertStringToNumber<float>(sphereNode->first_attribute("b")->value());
-
-      if (sphereNode->first_attribute("reflection")) {
-        reflection = convertStringToNumber<float>(sphereNode->first_attribute("reflection")->value());
+  if (argc == 5) {
+    for (int i = 1; i < argc; i += 2) {
+      if (strcmp(argv[i], "-i") == 0) {
+        spheresFilePath = argv[i + 1];
       }
-      if (sphereNode->first_attribute("transparency")) {
-        transparency = convertStringToNumber<float>(sphereNode->first_attribute("transparency")->value());
+      else if (strcmp(argv[i], "-m") == 0) {
+        movesFilePath = argv[i + 1];
       }
-      if (sphereNode->first_attribute("emissionR")) {
-        emissionR = convertStringToNumber<float>(sphereNode->first_attribute("emissionR")->value());
-      }
-      if (sphereNode->first_attribute("emissionG")) {
-        emissionG = convertStringToNumber<float>(sphereNode->first_attribute("emissionG")->value());
-      }
-      if (sphereNode->first_attribute("emissionB")) {
-        emissionB = convertStringToNumber<float>(sphereNode->first_attribute("emissionB")->value());
-      }
-
-      spheres.push_back(Sphere(Vec3f(x, y, z), radius, Vec3f(r, g, b), reflection, transparency, Vec3f(emissionR, emissionG, emissionB)));
-    }
-  }
-  catch (parse_error& e) {
-    ofstream errorFile;
-    errorFile.open("error_file.txt");
-    errorFile << "Error reading scene file " << ": " << e.what() << endl;
-    errorFile.close();
-    return 0;
-  }
-
-  try {
-    file<> passFile("test.xml");
-    xml_document<> doc;
-    doc.parse<0>(passFile.data());
-    xml_node<>* rootNode = doc.first_node();
-
-    for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
-      passes.push_back(Pass(passNode, directory, passCount++));
     }
 
-    //totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());
-    //numThreads = convertStringToNumber<int>(rootNode->first_attribute("threads")->value());
+    std::string directory;
+    auto now = std::time(nullptr);
+    std::ostringstream os;
+    os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
+    directory = "spheres" + os.str();
 
-    //for (xml_node<>* moveNode = rootNode->first_node(); moveNode; moveNode = moveNode->next_sibling()) {
-    //  
+    std::string mkdirCommand = "mkdir .\\" + directory;
+    system(mkdirCommand.c_str());
+
+    //BasicRender();
+    //SimpleShrinking();
+    //SmoothScaling();
+
+    //std::vector<Sphere> spheres;
+    std::vector<Pass> passes;
+    int totalFrames, numThreads, passCount = 0;
+
+    try {
+      file<> sceneFile(spheresFilePath.c_str());
+      xml_document<> doc;
+      doc.parse<0>(sceneFile.data());
+      xml_node<>* rootNode = doc.first_node();
+
+      float x, y, z, radius, r, g, b, reflection, transparency, emissionR, emissionG, emissionB;
+      reflection = transparency = emissionR = emissionG = emissionB = 0.0f;
+
+      for (xml_node<>* sphereNode = rootNode->first_node(); sphereNode; sphereNode = sphereNode->next_sibling()) {
+        x = convertStringToNumber<float>(sphereNode->first_attribute("x")->value());
+        y = convertStringToNumber<float>(sphereNode->first_attribute("y")->value());
+        z = convertStringToNumber<float>(sphereNode->first_attribute("z")->value());
+        radius = convertStringToNumber<float>(sphereNode->first_attribute("radius")->value());
+        r = convertStringToNumber<float>(sphereNode->first_attribute("r")->value());
+        g = convertStringToNumber<float>(sphereNode->first_attribute("g")->value());
+        b = convertStringToNumber<float>(sphereNode->first_attribute("b")->value());
+
+        if (sphereNode->first_attribute("reflection")) {
+          reflection = convertStringToNumber<float>(sphereNode->first_attribute("reflection")->value());
+        }
+        if (sphereNode->first_attribute("transparency")) {
+          transparency = convertStringToNumber<float>(sphereNode->first_attribute("transparency")->value());
+        }
+        if (sphereNode->first_attribute("emissionR")) {
+          emissionR = convertStringToNumber<float>(sphereNode->first_attribute("emissionR")->value());
+        }
+        if (sphereNode->first_attribute("emissionG")) {
+          emissionG = convertStringToNumber<float>(sphereNode->first_attribute("emissionG")->value());
+        }
+        if (sphereNode->first_attribute("emissionB")) {
+          emissionB = convertStringToNumber<float>(sphereNode->first_attribute("emissionB")->value());
+        }
+
+        spheres.push_back(Sphere(Vec3f(x, y, z), radius, Vec3f(r, g, b), reflection, transparency, Vec3f(emissionR, emissionG, emissionB)));
+      }
+    }
+    catch (parse_error& e) {
+      ofstream errorFile;
+      errorFile.open("error_file.txt");
+      errorFile << "Error reading scene file " << ": " << e.what() << endl;
+      errorFile.close();
+      return 0;
+    }
+
+    try {
+      file<> passFile(movesFilePath.c_str());
+      xml_document<> doc;
+      doc.parse<0>(passFile.data());
+      xml_node<>* rootNode = doc.first_node();
+
+      for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
+        passes.push_back(Pass(passNode, directory, passCount++));
+      }
+
+      //totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());
+      //numThreads = convertStringToNumber<int>(rootNode->first_attribute("threads")->value());
+
+      //for (xml_node<>* moveNode = rootNode->first_node(); moveNode; moveNode = moveNode->next_sibling()) {
+      //  
+      //}
+    }
+    catch (parse_error& e) {
+      ofstream errorFile;
+      errorFile.open("error_file.txt");
+      errorFile << "Error reading pass file " << ": " << e.what() << endl;
+      errorFile.close();
+      return 0;
+    }
+
+    //std::vector<std::thread> threads;
+
+    //int threadWorkload = 0;
+    //int remainder = 0;
+
+    //threadWorkload = totalFrames / numThreads;
+
+    //if (totalFrames % numThreads != 0) {
+    //  remainder = totalFrames - (threadWorkload * (numThreads - 1));
     //}
+
+    //for (int i = 0; i < numThreads; i++) {
+    //  if (i == numThreads - 1 && remainder > 0) {
+    //    threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + remainder, directory));
+    //  }
+    //  else {
+    //    threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, directory));
+    //  }
+    //}
+
+    //for (int i = 0; i < numThreads; i++) {
+    //  threads[i].join();
+    //}
+
+    for (Pass pass : passes) {
+      pass.render();
+    }
+
+    start = std::chrono::system_clock::now();
+    std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
+    system(ffmpegCommand.c_str());
+    endTime = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_time = endTime - start;
+    total_elapsed_time += elapsed_time;
+
+    std::cout << "**********************" << std::endl;
+    std::cout << "Finished video render in " << elapsed_time.count() << std::endl;
+    std::cout << "**********************" << std::endl;
+    std::cout << "**********************" << std::endl;
+    std::cout << "Total Render Time: " << total_elapsed_time.count() << std::endl;
+    std::cout << "**********************" << std::endl;
+
+    speedResults << "**********************" << std::endl;
+    speedResults << "Finished video render in " << elapsed_time.count() << std::endl;
+    speedResults << "**********************" << std::endl;
+    speedResults << "**********************" << std::endl;
+    speedResults << "Total Render Time: " << total_elapsed_time.count() << std::endl;
+    speedResults << "**********************" << std::endl;
+
+    speedResults.close();
   }
-  catch (parse_error& e) {
-    ofstream errorFile;
-    errorFile.open("error_file.txt");
-    errorFile << "Error reading pass file " << ": " << e.what() << endl;
-    errorFile.close();
-    return 0;
-  }
-
-  //std::vector<std::thread> threads;
-
-  //int threadWorkload = 0;
-  //int remainder = 0;
-
-  //threadWorkload = totalFrames / numThreads;
-
-  //if (totalFrames % numThreads != 0) {
-  //  remainder = totalFrames - (threadWorkload * (numThreads - 1));
-  //}
-
-  //for (int i = 0; i < numThreads; i++) {
-  //  if (i == numThreads - 1 && remainder > 0) {
-  //    threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + remainder, directory));
-  //  }
-  //  else {
-  //    threads.push_back(std::thread(rotateSpheres, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, directory));
-  //  }
-  //}
-
-  //for (int i = 0; i < numThreads; i++) {
-  //  threads[i].join();
-  //}
-
-  for (Pass pass : passes) {
-    pass.render();
-  }
-
-  start = std::chrono::system_clock::now();
-  std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
-  system(ffmpegCommand.c_str());
-  endTime = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_time = endTime - start;
-  total_elapsed_time += elapsed_time;
-
-  std::cout << "**********************" << std::endl;
-  std::cout << "Finished video render in " << elapsed_time.count() << std::endl;
-  std::cout << "**********************" << std::endl;
-  std::cout << "**********************" << std::endl;
-  std::cout << "Total Render Time: " << total_elapsed_time.count() << std::endl;
-  std::cout << "**********************" << std::endl;
-
-  speedResults << "**********************" << std::endl;
-  speedResults << "Finished video render in " << elapsed_time.count() << std::endl;
-  speedResults << "**********************" << std::endl;
-  speedResults << "**********************" << std::endl;
-  speedResults << "Total Render Time: " << total_elapsed_time.count() << std::endl;
-  speedResults << "**********************" << std::endl;
-
-  speedResults.close();
 
   system("PAUSE");
 
