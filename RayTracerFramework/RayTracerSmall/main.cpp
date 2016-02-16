@@ -483,7 +483,7 @@ int main(int argc, char **argv) {
   //SimpleShrinking();
   //SmoothScaling();
 
-  std::vector<Sphere> spheres;
+  //std::vector<Sphere> spheres;
   std::vector<Pass> passes;
   int totalFrames, numThreads, passCount = 0;
 
@@ -539,7 +539,7 @@ int main(int argc, char **argv) {
     xml_node<>* rootNode = doc.first_node();
 
     for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
-      passes.push_back(Pass(passNode, spheres, directory, passCount++));
+      passes.push_back(Pass(passNode, directory, passCount++));
     }
 
     //totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());

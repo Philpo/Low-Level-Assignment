@@ -5,6 +5,7 @@ std::chrono::time_point<std::chrono::system_clock> start;
 std::chrono::time_point<std::chrono::system_clock> endTime;
 std::chrono::duration<double> total_elapsed_time;
 std::ofstream speedResults("O1_results.txt");
+std::vector<Sphere> spheres;
 
 float mix(const float &a, const float &b, const float &mix) {
   return b * mix + a * (1 - mix);
@@ -223,16 +224,26 @@ void scale(Sphere& toScale, float amount) {
   toScale.radius2 = toScale.radius * toScale.radius;
 }
 
-void doPass(std::vector<Sphere>& spheres, int passOffset, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
+void doPass(int passOffset, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
+  std::vector<Sphere> copy;
+
+  for (Sphere sphere : spheres) {
+    copy.push_back(sphere);
+  }
+
   for (auto move : moves) {
-    move.doMove(startIndex, spheres[move.getTargetSphere()]);
+    move.doMove(startIndex, copy[move.getTargetSphere()]);
   }
   int i = startIndex;
   while (i < endIndex) {
     for (auto move : moves) {
-      move.doMove(spheres[move.getTargetSphere()]);
+      move.doMove(copy[move.getTargetSphere()]);
     }
-    render(spheres, passOffset + i, directory);
+    render(copy, passOffset + i, directory);
     i++;
+  }
+
+  for (int i = 0; i < copy.size(); i++) {
+    spheres[i] = copy[i];
   }
 }

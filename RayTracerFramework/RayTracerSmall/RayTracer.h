@@ -16,6 +16,7 @@
 #include <chrono>
 
 class Move;
+class Sphere;
 
 #if defined __linux__ || defined __APPLE__
 // "Compiled for Linux
@@ -29,6 +30,7 @@ extern std::chrono::time_point<std::chrono::system_clock> start;
 extern std::chrono::time_point<std::chrono::system_clock> endTime;
 extern std::chrono::duration<double> total_elapsed_time;
 extern std::ofstream speedResults;
+extern std::vector<Sphere> spheres;
 
 template<typename T>
 class Vec3 {
@@ -137,4 +139,4 @@ void rotateZ(Sphere& toRotate, float angle);
 
 void scale(Sphere& toScale, float amount);
 
-void doPass(std::vector<Sphere>& spheres, int passIndex, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);
+void doPass(int passIndex, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);
