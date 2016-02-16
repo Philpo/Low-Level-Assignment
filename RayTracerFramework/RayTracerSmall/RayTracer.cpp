@@ -1,6 +1,11 @@
 #include "RayTracer.h"
 #include "Move.h"
 
+std::chrono::time_point<std::chrono::system_clock> start;
+std::chrono::time_point<std::chrono::system_clock> endTime;
+std::chrono::duration<double> total_elapsed_time;
+std::ofstream speedResults("O1_results.txt");
+
 float mix(const float &a, const float &b, const float &mix) {
   return b * mix + a * (1 - mix);
 }
@@ -97,7 +102,7 @@ Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere>
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults) {
+void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
   start = std::chrono::system_clock::now();
 
   // quick and dirty
@@ -218,7 +223,7 @@ void scale(Sphere& toScale, float amount) {
   toScale.radius2 = toScale.radius * toScale.radius;
 }
 
-void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults) {
+void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
   for (auto move : moves) {
     move.doMove(startIndex, spheres[move.getTargetSphere()]);
   }
@@ -227,7 +232,7 @@ void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vec
     for (auto move : moves) {
       move.doMove(spheres[move.getTargetSphere()]);
     }
-    render(spheres, i, directory, start, endTime, total_elapsed_time, speedResults);
+    render(spheres, i, directory);
     i++;
   }
 }

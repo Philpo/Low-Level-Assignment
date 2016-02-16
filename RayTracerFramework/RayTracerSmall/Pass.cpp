@@ -9,7 +9,7 @@ Pass::Pass(xml_node<>* passNode, std::vector<Sphere>& spheres, std::string& dire
   }
 }
 
-void Pass::render(std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults) {
+void Pass::render() {
   std::vector<std::thread> threads;
 
   int threadWorkload = 0;
@@ -23,10 +23,10 @@ void Pass::render(std::chrono::time_point<std::chrono::system_clock>& start, std
 
   for (int i = 0; i < threadCount; i++) {
     if (i == threadCount - 1 && remainder > 0) {
-      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + remainder, moves, directory, std::ref(start), std::ref(endTime), std::ref(total_elapsed_time), std::ref(speedResults)));
+      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + remainder, moves, directory));
     }
     else {
-      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, moves, directory, std::ref(start), std::ref(endTime), std::ref(total_elapsed_time), std::ref(speedResults)));
+      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, moves, directory));
     }
   }
 

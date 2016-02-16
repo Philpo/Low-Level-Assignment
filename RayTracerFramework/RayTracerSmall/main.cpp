@@ -38,10 +38,10 @@ using namespace rapidxml;
   #define INFINITY 1e8
 #endif
 
-std::chrono::time_point<std::chrono::system_clock> start;
-std::chrono::time_point<std::chrono::system_clock> endTime;
-std::chrono::duration<double> total_elapsed_time;
-ofstream speedResults("O1_results.txt");
+//std::chrono::time_point<std::chrono::system_clock> start;
+//std::chrono::time_point<std::chrono::system_clock> endTime;
+//std::chrono::duration<double> total_elapsed_time;
+//ofstream speedResults("O1_results.txt");
 
 //
 //template<typename T>
@@ -285,7 +285,7 @@ void BasicRender(std::string& directory) {
   spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
 
   // This creates a file, titled 1.ppm in the current working directory
-  render(spheres, 1, directory, start, endTime, total_elapsed_time, speedResults);
+  render(spheres, 1, directory);
 
 }
 
@@ -320,7 +320,7 @@ void SimpleShrinking(std::string& directory) {
       spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
     }
 
-    render(spheres, i, directory, start, endTime, total_elapsed_time, speedResults);
+    render(spheres, i, directory);
     // Dont forget to clear the Vector holding the spheres.
     spheres.clear();
   }
@@ -335,7 +335,7 @@ void SmoothScaling(std::string& directory) {
     spheres.push_back(Sphere(Vec3f(0.0, 0, -20), 1, Vec3f(1.00, 0.32, 0.36), 1, 0.5)); // Radius++ change here
     spheres.push_back(Sphere(Vec3f(5.0, -1, -15), 2, Vec3f(0.90, 0.76, 0.46), 1, 0.0));
     spheres.push_back(Sphere(Vec3f(5.0, 0, -25), 3, Vec3f(0.65, 0.77, 0.97), 1, 0.0));
-    render(spheres, r, directory, start, endTime, total_elapsed_time, speedResults);
+    render(spheres, r, directory);
     std::cout << "Rendered and saved spheres" << r << ".ppm" << std::endl;
     // Dont forget to clear the Vector holding the spheres.
     spheres.clear();
@@ -438,7 +438,7 @@ void moveSpheres(int startIndex, int endIndex, std::string& directory) {
     moveX(spheres[1], r / 100.0f);
     spheres[2].center.y = sin(r * M_PI / 180.0f);
     moveZ(spheres[3], r / 100.0f);
-    render(spheres, r, directory, start, endTime, total_elapsed_time, speedResults);
+    render(spheres, r, directory);
     std::cout << "Rendered and saved spheres" << r << ".ppm" << std::endl;
   }
   // Dont forget to clear the Vector holding the spheres.
@@ -469,7 +469,6 @@ void moveSpheres(int startIndex, int endIndex, std::string& directory) {
 int main(int argc, char **argv) {
   // This sample only allows one choice per program execution. Feel free to improve upon this
   srand(13);
-
 
   std::string directory;
   auto now = std::time(nullptr);
@@ -581,7 +580,7 @@ int main(int argc, char **argv) {
   //  threads[i].join();
   //}
 
-  pass->render(start, endTime, total_elapsed_time, speedResults);
+  pass->render();
 
   start = std::chrono::system_clock::now();
   std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";

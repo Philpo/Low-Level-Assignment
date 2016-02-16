@@ -25,6 +25,11 @@ class Move;
 #define INFINITY 1e8
 #endif
 
+extern std::chrono::time_point<std::chrono::system_clock> start;
+extern std::chrono::time_point<std::chrono::system_clock> endTime;
+extern std::chrono::duration<double> total_elapsed_time;
+extern std::ofstream speedResults;
+
 template<typename T>
 class Vec3 {
 public:
@@ -116,7 +121,7 @@ Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere>
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults);
+void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory);
 
 void moveX(Sphere& toMove, float amount);
 
@@ -132,4 +137,4 @@ void rotateZ(Sphere& toRotate, float angle);
 
 void scale(Sphere& toScale, float amount);
 
-void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults);
+void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);
