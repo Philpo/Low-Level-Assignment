@@ -213,6 +213,11 @@ void rotateZ(Sphere& toRotate, float angle) {
   toRotate.center.z = newZ;
 }
 
+void scale(Sphere& toScale, float amount) {
+  toScale.radius += amount;
+  toScale.radius2 = toScale.radius * toScale.radius;
+}
+
 void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults) {
   for (auto move : moves) {
     move.doMove(startIndex, spheres[move.getTargetSphere()]);

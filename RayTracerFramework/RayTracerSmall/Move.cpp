@@ -24,6 +24,9 @@ Move::Move(xml_node<>* moveNode, std::vector<Sphere>& spheres) {
   else if (functionName == "rotateZ") {
     function = &rotateZ;
   }
+  else if (functionName == "scale") {
+    function = &scale;
+  }
 }
 
 void Move::doMove(int threadStart, Sphere& target) {

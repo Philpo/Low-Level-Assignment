@@ -130,4 +130,6 @@ void rotateY(Sphere& toRotate, float angle);
 
 void rotateZ(Sphere& toRotate, float angle);
 
+void scale(Sphere& toScale, float amount);
+
 void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory, std::chrono::time_point<std::chrono::system_clock>& start, std::chrono::time_point<std::chrono::system_clock>& endTime, std::chrono::duration<double>& total_elapsed_time, std::ofstream& speedResults);

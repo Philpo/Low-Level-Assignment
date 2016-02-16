@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<pass frames="360" threads="4">
+<pass frames="360" threads="8">
 	<move target="1" function="rotateX" amount="1" />
-	<move target="2" function="rotateY" amount="1" />
-	<move target="3" function="rotateZ" amount="1" />
+	<move target="2" function="moveY" amount="0.01" />
+	<move target="3" function="scale" amount="0.01" />
 </pass>
