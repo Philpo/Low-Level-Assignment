@@ -223,7 +223,7 @@ void scale(Sphere& toScale, float amount) {
   toScale.radius2 = toScale.radius * toScale.radius;
 }
 
-void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
+void doPass(std::vector<Sphere>& spheres, int passOffset, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
   for (auto move : moves) {
     move.doMove(startIndex, spheres[move.getTargetSphere()]);
   }
@@ -232,7 +232,7 @@ void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vec
     for (auto move : moves) {
       move.doMove(spheres[move.getTargetSphere()]);
     }
-    render(spheres, i, directory);
+    render(spheres, passOffset + i, directory);
     i++;
   }
 }

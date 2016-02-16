@@ -484,9 +484,8 @@ int main(int argc, char **argv) {
   //SmoothScaling();
 
   std::vector<Sphere> spheres;
-  int totalFrames, numThreads;
-
-  Pass* pass;
+  std::vector<Pass> passes;
+  int totalFrames, numThreads, passCount = 0;
 
   try {
     file<> sceneFile("scene.xml");
@@ -539,7 +538,9 @@ int main(int argc, char **argv) {
     doc.parse<0>(passFile.data());
     xml_node<>* rootNode = doc.first_node();
 
-    pass = new Pass(rootNode, spheres, directory);
+    for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
+      passes.push_back(Pass(passNode, spheres, directory, passCount++));
+    }
 
     //totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());
     //numThreads = convertStringToNumber<int>(rootNode->first_attribute("threads")->value());
@@ -580,7 +581,9 @@ int main(int argc, char **argv) {
   //  threads[i].join();
   //}
 
-  pass->render();
+  for (Pass pass : passes) {
+    pass.render();
+  }
 
   start = std::chrono::system_clock::now();
   std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
@@ -604,8 +607,6 @@ int main(int argc, char **argv) {
   speedResults << "**********************" << std::endl;
 
   speedResults.close();
-
-  delete pass;
 
   system("PAUSE");
 

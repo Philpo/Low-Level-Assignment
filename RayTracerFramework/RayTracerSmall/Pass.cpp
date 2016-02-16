@@ -1,6 +1,6 @@
 #include "Pass.h"
 
-Pass::Pass(xml_node<>* passNode, std::vector<Sphere>& spheres, std::string& directory) : spheres(spheres), directory(directory) {
+Pass::Pass(xml_node<>* passNode, std::vector<Sphere>& spheres, std::string& directory, int passIndex) : spheres(spheres), directory(directory), passIndex(passIndex) {
   numFrames = convertStringToNumber<int>(passNode->first_attribute("frames")->value());
   threadCount = convertStringToNumber<int>(passNode->first_attribute("threads")->value());
 
@@ -23,10 +23,10 @@ void Pass::render() {
 
   for (int i = 0; i < threadCount; i++) {
     if (i == threadCount - 1 && remainder > 0) {
-      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + remainder, moves, directory));
+      threads.push_back(std::thread(doPass, spheres, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + remainder, moves, directory));
     }
     else {
-      threads.push_back(std::thread(doPass, spheres, i * threadWorkload, (i * threadWorkload) + threadWorkload, moves, directory));
+      threads.push_back(std::thread(doPass, spheres, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + threadWorkload, moves, directory));
     }
   }
 

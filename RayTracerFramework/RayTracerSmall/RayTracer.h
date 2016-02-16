@@ -137,4 +137,4 @@ void rotateZ(Sphere& toRotate, float angle);
 
 void scale(Sphere& toScale, float amount);
 
-void doPass(std::vector<Sphere>& spheres, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);
+void doPass(std::vector<Sphere>& spheres, int passIndex, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);
