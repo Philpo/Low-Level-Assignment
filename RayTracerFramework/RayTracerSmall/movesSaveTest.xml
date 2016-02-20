@@ -1,43 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <passes>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="0.05" />
 		<move target="3" function="scale" amount="0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="-0.05" />
 		<move target="3" function="scale" amount="-0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="0.05" />
 		<move target="3" function="scale" amount="0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="-0.05" />
 		<move target="3" function="scale" amount="-0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="0.05" />
 		<move target="3" function="scale" amount="0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="-0.05" />
 		<move target="3" function="scale" amount="-0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="0.05" />
 		<move target="3" function="scale" amount="0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="-0.05" />
 		<move target="3" function="scale" amount="-0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="0.05" />
 		<move target="3" function="scale" amount="0.01" />
 	</pass>
-	<pass>
+	<pass frames="36" threads="8">
 		<move target="1" function="rotateZ" amount="1" />
+		<move target="2" function="moveX" amount="-0.05" />
 		<move target="3" function="scale" amount="-0.01" />
 	</pass>
 </passes>
