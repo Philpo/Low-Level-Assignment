@@ -147,12 +147,16 @@
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="Pass.cpp" />
     <ClCompile Include="RayTracer.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Move.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="RayTracer.h" />
+    <ClInclude Include="Sphere.h" />
     <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="Vecf.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
