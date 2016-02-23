@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <scene>
-	<sphere x="-100" y="10" z="-20" radius="1.01" r="0.2" g="0.2" b="0.2" reflection="1" emissionR="1" />
+	<sphere x="0" y="-10004" z="-20" radius="10000" r="0.2" g="0.2" b="0.2" reflection="1" emissionR="1" />
 	<sphere x="1" y="0" z="-20" radius="1" r="1" g="0.32" b="0.36" reflection="1" transparency="0.5" />
 	<sphere x="5" y="-1" z="-15" radius="2" r="0.9" g="0.76" b="0.46" reflection="1" />
 	<sphere x="5" y="0" z="-25" radius="3" r="0.65" g="0.77" b="0.97" reflection="1" />

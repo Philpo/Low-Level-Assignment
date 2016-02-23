@@ -21,7 +21,7 @@ namespace RayTracerTool {
     }
 
     private void button1_Click(object sender, EventArgs e) {
-      function = comboBox1.SelectedText;
+      function = comboBox1.SelectedItem.ToString();
       amount = float.Parse(numericUpDown2.Text);
 
       this.Close();

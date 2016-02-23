@@ -165,6 +165,7 @@ namespace RayTracerTool {
         //  layout.treeView1.Nodes.Add(node);
         //}
 
+        fileStream.Close();
         movesFileToolStripMenuItem.Enabled = true;
         passToolStripMenuItem.Enabled = true;
         Cursor.Current = Cursors.Default;
@@ -220,6 +221,7 @@ namespace RayTracerTool {
           //  i++;
           //}
         }
+        fileStream.Close();
         Cursor.Current = Cursors.Default;
         saveToolStripMenuItem.Enabled = true;
       }
@@ -511,33 +513,37 @@ namespace RayTracerTool {
     }
 
     private void spheresTreeViewDoubleClick(object sender, EventArgs args) {
-      SpherePropertiesDialog dialog = new SpherePropertiesDialog((Sphere) ((TreeView) sender).SelectedNode.Tag);
+      if (((TreeView) sender).SelectedNode != null) {
+        SpherePropertiesDialog dialog = new SpherePropertiesDialog((Sphere)((TreeView)sender).SelectedNode.Tag);
 
-      DialogResult result = dialog.ShowDialog();
-      if (result == DialogResult.OK) {
-        Sphere sphere = (Sphere) ((TreeView) sender).SelectedNode.Tag;
+        DialogResult result = dialog.ShowDialog();
+        if (result == DialogResult.OK) {
+          Sphere sphere = (Sphere)((TreeView)sender).SelectedNode.Tag;
 
-        sphere.setX(dialog.getX());
-        sphere.setY(dialog.getY());
-        sphere.setZ(dialog.getZ());
-        sphere.setRadius(dialog.getRadius());
-        sphere.setReflection(dialog.getReflection());
-        sphere.setTransparency(dialog.getTransparency());
-        sphere.setSurface(dialog.getSurface());
-        sphere.setEmission(dialog.getEmission());
+          sphere.setX(dialog.getX());
+          sphere.setY(dialog.getY());
+          sphere.setZ(dialog.getZ());
+          sphere.setRadius(dialog.getRadius());
+          sphere.setReflection(dialog.getReflection());
+          sphere.setTransparency(dialog.getTransparency());
+          sphere.setSurface(dialog.getSurface());
+          sphere.setEmission(dialog.getEmission());
+        }
       }
     }
 
     private void movesTreeViewDoubleClick(object sender, EventArgs args) {
-      MovePropertiesDialog dialog = new MovePropertiesDialog((Move) ((TreeView) sender).SelectedNode.Tag, spheresLayout.treeView1.Nodes.Count);
+      if (((TreeView) sender).SelectedNode != null) {
+        MovePropertiesDialog dialog = new MovePropertiesDialog((Move)((TreeView)sender).SelectedNode.Tag, spheresLayout.treeView1.Nodes.Count);
 
-      DialogResult result = dialog.ShowDialog();
-      if (result == DialogResult.OK) {
-        Move move = (Move) ((TreeView) sender).SelectedNode.Tag;
+        DialogResult result = dialog.ShowDialog();
+        if (result == DialogResult.OK) {
+          Move move = (Move)((TreeView)sender).SelectedNode.Tag;
 
-        move.setTarget(((TreeView) sender).SelectedNode.Index);
-        move.setFunction(dialog.getFunction());
-        move.setAmount(dialog.getAmount());
+          move.setTarget(((TreeView)sender).SelectedNode.Index);
+          move.setFunction(dialog.getFunction());
+          move.setAmount(dialog.getAmount());
+        }
       }
     }
   }
