@@ -64,6 +64,7 @@ public:
 };
 
 typedef Vec3<float> Vec3f;
+extern Vec3f* image;
 
 class Sphere {
 public:

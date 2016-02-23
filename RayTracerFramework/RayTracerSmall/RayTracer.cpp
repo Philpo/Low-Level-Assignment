@@ -1,11 +1,13 @@
 #include "RayTracer.h"
 #include "Move.h"
+#include <thread>
 
 std::chrono::time_point<std::chrono::system_clock> start;
 std::chrono::time_point<std::chrono::system_clock> endTime;
 std::chrono::duration<double> total_elapsed_time;
 std::ofstream speedResults("O1_results.txt");
 std::vector<Sphere> spheres;
+Vec3f* image;
 
 float mix(const float &a, const float &b, const float &mix) {
   return b * mix + a * (1 - mix);
@@ -98,6 +100,21 @@ Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere>
   return surfaceColor + sphere->emissionColor;
 }
 
+void threadedRender(int startIndex, int endIndex, int startHeight, int endHeight, int startWidth, int endWidth, float invWidth, float invHeight, float angle, float aspectratio) {
+  Vec3f* pixel = image + startIndex;
+
+  for (unsigned y = startHeight; y < endHeight; ++y) {
+    for (unsigned x = startWidth; x < endWidth; ++x, ++pixel) {
+      float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
+      float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
+      Vec3f raydir(xx, yy, -1);
+      raydir.normalize();
+      Vec3f result = trace(Vec3f(0), raydir, spheres, 0);
+      *pixel = result;
+    }
+  }
+}
+
 //[comment]
 // Main rendering function. We compute a camera ray for each pixel of the image
 // trace it and return a color. If the ray hits a sphere, we return the color of the
@@ -117,20 +134,70 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
 
   // Recommended Production Resolution
   //unsigned width = 1920, height = 1080;
-  Vec3f *image = new Vec3f[width * height], *pixel = image;
+  image = new Vec3f[width * height];//, *pixel = image;
   float invWidth = 1 / float(width), invHeight = 1 / float(height);
   float fov = 30, aspectratio = width / float(height);
   float angle = tan(M_PI * 0.5 * fov / 180.);
-  // Trace rays
-  for (unsigned y = 0; y < height; ++y) {
-    for (unsigned x = 0; x < width; ++x, ++pixel) {
-      float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
-      float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
-      Vec3f raydir(xx, yy, -1);
-      raydir.normalize();
-      *pixel = trace(Vec3f(0), raydir, spheres, 0);
-    }
+
+  int totalPixels = width * height;
+
+  std::vector<std::thread> threads;
+
+  int threadWorkload = 0;
+  int remainder = 0;
+  int heightRemainder = 0;
+  int widthRemainder = 0;
+  int dividedHeight = 0;
+  int dividedWidth = 0;
+
+  threadWorkload = totalPixels / 8;
+  dividedHeight = height / 8;
+  dividedWidth = width / 8;
+
+  if (totalPixels % 8 != 0) {
+    remainder = totalPixels - (threadWorkload * (8 - 1));
   }
+
+  if (height % 8 != 0) {
+    heightRemainder = height - (dividedHeight * (8 - 1));
+  }
+
+  if (width % 8 != 0) {
+    widthRemainder = width - (dividedWidth * (8 - 1));
+  }
+
+  for (int i = 0; i < 8; i++) {
+    int end = (i * threadWorkload) + threadWorkload;
+    int heightEnd = (i * dividedHeight) + dividedHeight;
+    int widthEnd = (i * dividedWidth) + dividedWidth;
+
+    if (i == 8 - 1 && remainder > 0) {
+      end = (i * threadWorkload) + remainder;
+    }
+    if (i == 8 - 1 && heightRemainder > 0) {
+      heightEnd = (i * dividedHeight) + heightRemainder;
+    }
+    if (i == 8 - 1 && widthRemainder > 0) {
+      widthEnd = (i * dividedWidth) + widthRemainder;
+    }
+
+    threads.push_back(std::thread(threadedRender, i * threadWorkload, end, i * dividedHeight, heightEnd, i * dividedWidth, widthEnd, 1.0f / (float) (widthEnd - (i * dividedWidth)), 1.0f / (float) (heightEnd - (i * dividedHeight)), angle, aspectratio));
+  }
+
+  for (int i = 0; i < 8; i++) {
+    threads[i].join();
+  }
+
+  // Trace rays
+  //for (unsigned y = 0; y < height; ++y) {
+  //  for (unsigned x = 0; x < width; ++x, ++pixel) {
+  //    float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
+  //    float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
+  //    Vec3f raydir(xx, yy, -1);
+  //    raydir.normalize();
+  //    *pixel = trace(Vec3f(0), raydir, spheres, 0);
+  //  }
+  //}
   // Save result to a PPM image (keep these flags if you compile under Windows)
   std::stringstream ss;
   if (iteration < 10) {
@@ -225,25 +292,34 @@ void scale(Sphere& toScale, float amount) {
 }
 
 void doPass(int passOffset, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
-  std::vector<Sphere> copy;
+  //std::vector<Sphere> copy;
 
-  for (Sphere sphere : spheres) {
-    copy.push_back(sphere);
-  }
+  //for (Sphere sphere : spheres) {
+  //  copy.push_back(sphere);
+  //}
 
-  for (auto move : moves) {
-    move.doMove(startIndex, copy[move.getTargetSphere()]);
-  }
+  //for (auto move : moves) {
+  //  move.doMove(startIndex, copy[move.getTargetSphere()]);
+  //}
+  //int i = startIndex;
+  //while (i < endIndex) {
+  //  for (auto move : moves) {
+  //    move.doMove(copy[move.getTargetSphere()]);
+  //  }
+  //  render(copy, passOffset + i, directory);
+  //  i++;
+  //}
+
+  //for (int i = 0; i < copy.size(); i++) {
+  //  spheres[i] = copy[i];
+  //}
+
   int i = startIndex;
   while (i < endIndex) {
     for (auto move : moves) {
-      move.doMove(copy[move.getTargetSphere()]);
+      move.doMove(spheres[move.getTargetSphere()]);
     }
-    render(copy, passOffset + i, directory);
+    render(spheres, passOffset + i, directory);
     i++;
-  }
-
-  for (int i = 0; i < copy.size(); i++) {
-    spheres[i] = copy[i];
   }
 }
