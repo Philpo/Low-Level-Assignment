@@ -197,6 +197,52 @@ void threadPoolRender(int numThreads, int iteration, std::string& directory) {
   speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
 }
 
+void partionedRender(int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio) {
+  int totalPixels = width * height;
+  int threadWorkload = 0;
+  int remainder = 0;
+  int heightRemainder = 0;
+  int widthRemainder = 0;
+  int dividedHeight = 0;
+  int dividedWidth = 0;
+  std::vector<std::thread> threads;
+  int numThreads = 8;
+
+  //threadWorkload = totalPixels / numThreads;
+  dividedHeight = height / numThreads;
+  dividedWidth = width / numThreads;
+
+  if (totalPixels % numThreads != 0) {
+    remainder = totalPixels - (threadWorkload * (numThreads - 1));
+  }
+
+  if (height % numThreads != 0) {
+    heightRemainder = height - (dividedHeight * (numThreads - 1));
+  }
+
+  if (width % numThreads != 0) {
+    widthRemainder = width - (dividedWidth * (numThreads - 1));
+  }
+
+  threadWorkload = dividedHeight * width;
+
+  for (int i = 0; i < numThreads; i++) {
+    int end = (i * threadWorkload) + threadWorkload;
+    int heightEnd = (i * dividedHeight) + dividedHeight;
+
+    if (i == (numThreads - 1) && heightRemainder > 0) {
+      heightEnd = (i * dividedHeight) + heightRemainder;
+    }
+
+
+    threads.push_back(std::thread(threadedRender, (top * width) + (i * threadWorkload), end, width, top + (i * dividedHeight),  top + heightEnd, invWidth, invHeight, angle, aspectratio));
+  }
+
+  for (int i = 0; i < numThreads; i++) {
+    threads[i].join();
+  }
+}
+
 //[comment]
 // Main rendering function. We compute a camera ray for each pixel of the image
 // trace it and return a color. If the ray hits a sphere, we return the color of the
@@ -233,43 +279,50 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
   int dividedHeight = 0;
   int dividedWidth = 0;
 
-  threadWorkload = totalPixels / 8;
-  dividedHeight = height / 8;
-  dividedWidth = width / 8;
+  dividedHeight = height / 4;
 
-  if (totalPixels % 8 != 0) {
-    remainder = totalPixels - (threadWorkload * (8 - 1));
-  }
+  partionedRender(0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+  partionedRender(dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+  partionedRender(dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+  partionedRender(dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
 
-  if (height % 8 != 0) {
-    heightRemainder = height - (dividedHeight * (8 - 1));
-  }
+  //threadWorkload = totalPixels / 8;
+  //dividedHeight = height / 8;
+  //dividedWidth = width / 8;
 
-  if (width % 8 != 0) {
-    widthRemainder = width - (dividedWidth * (8 - 1));
-  }
+  //if (totalPixels % 8 != 0) {
+  //  remainder = totalPixels - (threadWorkload * (8 - 1));
+  //}
 
-  for (int i = 0; i < 8; i++) {
-    int end = (i * threadWorkload) + threadWorkload;
-    int heightEnd = (i * dividedHeight) + dividedHeight;
-    int widthEnd = (i * dividedWidth) + dividedWidth;
+  //if (height % 8 != 0) {
+  //  heightRemainder = height - (dividedHeight * (8 - 1));
+  //}
 
-    if (i == 8 - 1 && remainder > 0) {
-      end = (i * threadWorkload) + remainder;
-    }
-    if (i == 8 - 1 && heightRemainder > 0) {
-      heightEnd = (i * dividedHeight) + heightRemainder;
-    }
-    if (i == 8 - 1 && widthRemainder > 0) {
-      widthEnd = (i * dividedWidth) + widthRemainder;
-    }
+  //if (width % 8 != 0) {
+  //  widthRemainder = width - (dividedWidth * (8 - 1));
+  //}
 
-    threads.push_back(std::thread(threadedRender, i * threadWorkload, end, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
-  }
+  //for (int i = 0; i < 8; i++) {
+  //  int end = (i * threadWorkload) + threadWorkload;
+  //  int heightEnd = (i * dividedHeight) + dividedHeight;
+  //  int widthEnd = (i * dividedWidth) + dividedWidth;
 
-  for (int i = 0; i < 8; i++) {
-    threads[i].join();
-  }
+  //  if (i == 8 - 1 && remainder > 0) {
+  //    end = (i * threadWorkload) + remainder;
+  //  }
+  //  if (i == 8 - 1 && heightRemainder > 0) {
+  //    heightEnd = (i * dividedHeight) + heightRemainder;
+  //  }
+  //  if (i == 8 - 1 && widthRemainder > 0) {
+  //    widthEnd = (i * dividedWidth) + widthRemainder;
+  //  }
+
+  //  threads.push_back(std::thread(threadedRender, i * threadWorkload, end, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
+  //}
+
+  //for (int i = 0; i < 8; i++) {
+  //  threads[i].join();
+  //}
 
   // Trace rays
   //for (unsigned y = 0; y < height; ++y) {

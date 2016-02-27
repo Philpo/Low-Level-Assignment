@@ -25,6 +25,8 @@ namespace RayTracerTool {
       numericUpDown6.Text = sphere.getTransparency().ToString();
       surface = sphere.getSurface();
       emission = sphere.getEmission();
+      pictureBox1.BackColor = System.Drawing.Color.FromArgb(surface.A, surface.R, surface.G, surface.B);
+      pictureBox2.BackColor = System.Drawing.Color.FromArgb(emission.A, emission.R, emission.G, emission.B);
     }
 
     private void button1_Click(object sender, EventArgs e) {
@@ -35,6 +37,7 @@ namespace RayTracerTool {
 
       if (result == DialogResult.OK) {
         surface = System.Windows.Media.Color.FromArgb(dialog.Color.A, dialog.Color.R, dialog.Color.G, dialog.Color.B);
+        pictureBox1.BackColor = System.Drawing.Color.FromArgb(surface.A, surface.R, surface.G, surface.B);
       }
     }
 
@@ -46,6 +49,7 @@ namespace RayTracerTool {
 
       if (result == DialogResult.OK) {
         emission = System.Windows.Media.Color.FromArgb(dialog.Color.A, dialog.Color.R, dialog.Color.G, dialog.Color.B);
+        pictureBox2.BackColor = System.Drawing.Color.FromArgb(emission.A, emission.R, emission.G, emission.B);
       }
     }
 
