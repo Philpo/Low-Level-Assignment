@@ -4,12 +4,12 @@
 
 class Pass {
 public:
-  Pass(xml_node<>* passNode, std::string& directory, int passIndex);
+	Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::string& threadMethod, int numThreads);
   ~Pass() {}
 
   void render();
 private:
   int numFrames, threadCount, passIndex;
-  std::string directory;
+  std::string directory, threadMethod;
   std::vector<Move> moves;
 };

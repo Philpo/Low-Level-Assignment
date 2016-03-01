@@ -1,6 +1,7 @@
 #include "Pass.h"
 
-Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex) : directory(directory), passIndex(passIndex) {
+Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::string& threadMethod, int numThreads) : 
+	directory(directory), passIndex(passIndex), threadMethod(threadMethod) {
   numFrames = convertStringToNumber<int>(passNode->first_attribute("frames")->value());
   threadCount = convertStringToNumber<int>(passNode->first_attribute("threads")->value());
 

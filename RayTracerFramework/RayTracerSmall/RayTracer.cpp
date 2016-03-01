@@ -262,78 +262,22 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
 
   // Recommended Production Resolution
   //unsigned width = 1920, height = 1080;
-  image = new Vec3f[width * height];//, *pixel = image;
+  Vec3f* image = new Vec3f[width * height];//, *pixel = image;
   Vec3f* pixel = image;
   float invWidth = 1 / float(width), invHeight = 1 / float(height);
   float fov = 30, aspectratio = width / float(height);
   float angle = tan(M_PI * 0.5 * fov / 180.);
 
-  int totalPixels = width * height;
-
-  std::vector<std::thread> threads;
-
-  int threadWorkload = 0;
-  int remainder = 0;
-  int heightRemainder = 0;
-  int widthRemainder = 0;
-  int dividedHeight = 0;
-  int dividedWidth = 0;
-
-  dividedHeight = height / 4;
-
-  partionedRender(0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-  partionedRender(dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-  partionedRender(dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-  partionedRender(dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-
-  //threadWorkload = totalPixels / 8;
-  //dividedHeight = height / 8;
-  //dividedWidth = width / 8;
-
-  //if (totalPixels % 8 != 0) {
-  //  remainder = totalPixels - (threadWorkload * (8 - 1));
-  //}
-
-  //if (height % 8 != 0) {
-  //  heightRemainder = height - (dividedHeight * (8 - 1));
-  //}
-
-  //if (width % 8 != 0) {
-  //  widthRemainder = width - (dividedWidth * (8 - 1));
-  //}
-
-  //for (int i = 0; i < 8; i++) {
-  //  int end = (i * threadWorkload) + threadWorkload;
-  //  int heightEnd = (i * dividedHeight) + dividedHeight;
-  //  int widthEnd = (i * dividedWidth) + dividedWidth;
-
-  //  if (i == 8 - 1 && remainder > 0) {
-  //    end = (i * threadWorkload) + remainder;
-  //  }
-  //  if (i == 8 - 1 && heightRemainder > 0) {
-  //    heightEnd = (i * dividedHeight) + heightRemainder;
-  //  }
-  //  if (i == 8 - 1 && widthRemainder > 0) {
-  //    widthEnd = (i * dividedWidth) + widthRemainder;
-  //  }
-
-  //  threads.push_back(std::thread(threadedRender, i * threadWorkload, end, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
-  //}
-
-  //for (int i = 0; i < 8; i++) {
-  //  threads[i].join();
-  //}
-
   // Trace rays
-  //for (unsigned y = 0; y < height; ++y) {
-  //  for (unsigned x = 0; x < width; ++x, ++pixel) {
-  //    float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
-  //    float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
-  //    Vec3f raydir(xx, yy, -1);
-  //    raydir.normalize();
-  //    *pixel = trace(Vec3f(0), raydir, spheres, 0);
-  //  }
-  //}
+  for (unsigned y = 0; y < height; ++y) {
+    for (unsigned x = 0; x < width; ++x, ++pixel) {
+      float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
+      float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
+      Vec3f raydir(xx, yy, -1);
+      raydir.normalize();
+      *pixel = trace(Vec3f(0), raydir, spheres, 0);
+    }
+  }
   // Save result to a PPM image (keep these flags if you compile under Windows)
   std::stringstream ss;
   if (iteration < 10) {
@@ -363,6 +307,167 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
   total_elapsed_time += elapsed_time;
   std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
   speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
+}
+
+void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads) {
+	start = std::chrono::system_clock::now();
+
+	// quick and dirty
+#ifdef _DEBUG
+	unsigned width = 640, height = 480;
+#else
+	unsigned width = 1920, height = 1080;
+#endif
+
+	image = new Vec3f[width * height];
+	Vec3f* pixel = image;
+	float invWidth = 1 / float(width), invHeight = 1 / float(height);
+	float fov = 30, aspectratio = width / float(height);
+	float angle = tan(M_PI * 0.5 * fov / 180.);
+
+	int totalPixels = width * height;
+
+	std::vector<std::thread> threads;
+
+	int threadWorkload = 0;
+	int remainder = 0;
+	int heightRemainder = 0;
+	int widthRemainder = 0;
+	int dividedHeight = 0;
+	int dividedWidth = 0;
+
+	dividedHeight = height / 4;
+
+	partionedRender(0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+
+	// Save result to a PPM image (keep these flags if you compile under Windows)
+	std::stringstream ss;
+	if (iteration < 10) {
+		ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
+	}
+	else if (iteration < 100) {
+		ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
+	}
+	else {
+		ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
+	}
+	std::string tempString = ss.str();
+	char* filename = (char*) tempString.c_str();
+
+	std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+	ofs << "P6\n" << width << " " << height << "\n255\n";
+	for (unsigned i = 0; i < width * height; ++i) {
+		ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
+			(unsigned char) (std::min(float(1), image[i].y) * 255) <<
+			(unsigned char) (std::min(float(1), image[i].z) * 255);
+	}
+	ofs.close();
+	delete[] image;
+
+	endTime = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_time = endTime - start;
+	total_elapsed_time += elapsed_time;
+	std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
+	speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
+}
+
+void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads) {
+	start = std::chrono::system_clock::now();
+
+	// quick and dirty
+#ifdef _DEBUG
+	unsigned width = 640, height = 480;
+#else
+	unsigned width = 1920, height = 1080;
+#endif
+
+	image = new Vec3f[width * height];
+	Vec3f* pixel = image;
+	float invWidth = 1 / float(width), invHeight = 1 / float(height);
+	float fov = 30, aspectratio = width / float(height);
+	float angle = tan(M_PI * 0.5 * fov / 180.);
+
+	int totalPixels = width * height;
+
+	std::vector<std::thread> threads;
+
+	int threadWorkload = 0;
+	int remainder = 0;
+	int heightRemainder = 0;
+	int widthRemainder = 0;
+	int dividedHeight = 0;
+	int dividedWidth = 0;
+
+	threadWorkload = totalPixels / 8;
+	dividedHeight = height / 8;
+	dividedWidth = width / 8;
+
+	if (totalPixels % 8 != 0) {
+	  remainder = totalPixels - (threadWorkload * (8 - 1));
+	}
+
+	if (height % 8 != 0) {
+	  heightRemainder = height - (dividedHeight * (8 - 1));
+	}
+
+	if (width % 8 != 0) {
+	  widthRemainder = width - (dividedWidth * (8 - 1));
+	}
+
+	for (int i = 0; i < 8; i++) {
+	  int end = (i * threadWorkload) + threadWorkload;
+	  int heightEnd = (i * dividedHeight) + dividedHeight;
+	  int widthEnd = (i * dividedWidth) + dividedWidth;
+
+	  if (i == 8 - 1 && remainder > 0) {
+	    end = (i * threadWorkload) + remainder;
+	  }
+	  if (i == 8 - 1 && heightRemainder > 0) {
+	    heightEnd = (i * dividedHeight) + heightRemainder;
+	  }
+	  if (i == 8 - 1 && widthRemainder > 0) {
+	    widthEnd = (i * dividedWidth) + widthRemainder;
+	  }
+
+	  threads.push_back(std::thread(threadedRender, i * threadWorkload, end, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
+	}
+
+	for (int i = 0; i < 8; i++) {
+	  threads[i].join();
+	}
+
+	// Save result to a PPM image (keep these flags if you compile under Windows)
+	std::stringstream ss;
+	if (iteration < 10) {
+		ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
+	}
+	else if (iteration < 100) {
+		ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
+	}
+	else {
+		ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
+	}
+	std::string tempString = ss.str();
+	char* filename = (char*) tempString.c_str();
+
+	std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+	ofs << "P6\n" << width << " " << height << "\n255\n";
+	for (unsigned i = 0; i < width * height; ++i) {
+		ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
+			(unsigned char) (std::min(float(1), image[i].y) * 255) <<
+			(unsigned char) (std::min(float(1), image[i].z) * 255);
+	}
+	ofs.close();
+	delete[] image;
+
+	endTime = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_time = endTime - start;
+	total_elapsed_time += elapsed_time;
+	std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
+	speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
 }
 
 void moveX(Sphere& toMove, float amount) {
@@ -455,7 +560,8 @@ void doPass(int passOffset, int startIndex, int endIndex, std::vector<Move>& mov
     for (auto move : moves) {
       move.doMove(spheres[move.getTargetSphere()]);
     }
-    render(spheres, passOffset + i, directory);
+    //partitionAndRender(spheres, passOffset + i, directory, 8);
+		threadPartitionRender(spheres, passOffset + i, directory, 8);
     i++;
   }
 }

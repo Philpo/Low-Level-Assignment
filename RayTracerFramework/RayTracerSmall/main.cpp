@@ -470,10 +470,11 @@ int main(int argc, char **argv) {
   // This sample only allows one choice per program execution. Feel free to improve upon this
   srand(13);
 
-  std::string spheresFilePath, movesFilePath;
+  std::string spheresFilePath, movesFilePath, threadMethod;
+	int numThreads;
 
-  if (argc == 5) {
-    for (int i = 1; i < argc; i += 2) {
+  if (argc == 6 || argc == 7) {
+    for (int i = 1; i < 5; i += 2) {
       if (strcmp(argv[i], "-i") == 0) {
         spheresFilePath = argv[i + 1];
       }
@@ -481,6 +482,22 @@ int main(int argc, char **argv) {
         movesFilePath = argv[i + 1];
       }
     }
+
+		if (argc == 6) {
+			if (strcmp(argv[5], "-tf") == 0) {
+				threadMethod = "tf";
+			}
+		}
+		else if (argc == 7) {
+			if (strcmp(argv[5], "-p") == 0) {
+				threadMethod = "p";
+				numThreads = convertStringToNumber<int>(argv[6]);
+			}
+			else if (strcmp(argv[5], "-tp") == 0) {
+				threadMethod = "tp";
+				numThreads = convertStringToNumber<int>(argv[6]);
+			}
+		}
 
     std::string directory;
     auto now = std::time(nullptr);
@@ -551,7 +568,7 @@ int main(int argc, char **argv) {
       xml_node<>* rootNode = doc.first_node();
 
       for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
-        passes.push_back(Pass(passNode, directory, passCount++));
+        passes.push_back(Pass(passNode, directory, passCount++, threadMethod, numThreads));
       }
 
       //totalFrames = convertStringToNumber<int>(rootNode->first_attribute("total_frames")->value());

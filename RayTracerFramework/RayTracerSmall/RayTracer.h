@@ -55,12 +55,14 @@ float mix(const float &a, const float &b, const float &mix);
 //[/comment]
 Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere> &spheres, const int &depth);
 
-//[comment]
-// Main rendering function. We compute a camera ray for each pixel of the image
-// trace it and return a color. If the ray hits a sphere, we return the color of the
-// sphere at the intersection point, else we return the background color.
-//[/comment]
+// renders an individual frame using one thread; the multi-threading aspect come from computing frames on multiple threads
 void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory);
+
+// partition the screen into quarters and compute each partition using numThreads threads
+void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
+
+// the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
+void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
 
 void moveX(Sphere& toMove, float amount);
 
