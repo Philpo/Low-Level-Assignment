@@ -56,7 +56,7 @@ float mix(const float &a, const float &b, const float &mix);
 Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere> &spheres, const int &depth);
 
 // renders an individual frame using one thread; the multi-threading aspect come from computing frames on multiple threads
-void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory);
+void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory);
 
 // partition the screen into quarters and compute each partition using numThreads threads
 void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
@@ -77,5 +77,3 @@ void rotateY(Sphere& toRotate, float angle);
 void rotateZ(Sphere& toRotate, float angle);
 
 void scale(Sphere& toScale, float amount);
-
-void doPass(int passIndex, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory);

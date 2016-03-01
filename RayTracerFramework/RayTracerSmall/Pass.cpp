@@ -3,7 +3,12 @@
 Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::string& threadMethod, int numThreads) : 
 	directory(directory), passIndex(passIndex), threadMethod(threadMethod) {
   numFrames = convertStringToNumber<int>(passNode->first_attribute("frames")->value());
-  threadCount = convertStringToNumber<int>(passNode->first_attribute("threads")->value());
+  if (threadMethod == "tp" || threadMethod == "p") {
+    threadCount = numThreads;
+  }
+  else {
+    threadCount = convertStringToNumber<int>(passNode->first_attribute("threads")->value());
+  }
 
   for (xml_node<>* moveNode = passNode->first_node(); moveNode; moveNode = moveNode->next_sibling()) {
     moves.push_back(Move(moveNode, spheres));
@@ -11,27 +16,77 @@ Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::str
 }
 
 void Pass::render() {
-  std::vector<std::thread> threads;
+  if (threadMethod == "tf") {
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+    std::vector<std::thread> threads;
 
-  int threadWorkload = 0;
-  int remainder = 0;
+    int threadWorkload = 0;
+    int remainder = 0;
 
-  threadWorkload = numFrames / threadCount;
+    threadWorkload = numFrames / threadCount;
 
-  if (numFrames % threadCount != 0) {
-    remainder = numFrames - (threadWorkload * (threadCount - 1));
-  }
-
-  for (int i = 0; i < threadCount; i++) {
-    if (i == threadCount - 1 && remainder > 0) {
-      threads.push_back(std::thread(doPass, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + remainder, moves, directory));
+    if (numFrames % threadCount != 0) {
+      remainder = numFrames - (threadWorkload * (threadCount - 1));
     }
-    else {
-      threads.push_back(std::thread(doPass, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + threadWorkload, moves, directory));
+
+    for (int i = 0; i < threadCount; i++) {
+      if (i == threadCount - 1 && remainder > 0) {
+        threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + remainder));
+      }
+      else {
+        threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + threadWorkload));
+      }
+    }
+
+    for (int i = 0; i < threadCount; i++) {
+      threads[i].join();
+    }
+    endTime = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_time = endTime - start;
+    total_elapsed_time += elapsed_time;
+  }
+  else {
+    doPass(passIndex * numFrames, 0, numFrames);
+  }
+}
+
+void Pass::doPass(int passOffset, int startIndex, int endIndex) {
+  if (threadMethod == "tf") {
+    std::vector<Sphere> copy;
+
+    for (Sphere sphere : spheres) {
+      copy.push_back(sphere);
+    }
+
+    for (auto move : moves) {
+      move.doMove(startIndex, copy[move.getTargetSphere()]);
+    }
+    int i = startIndex;
+    while (i < endIndex) {
+      for (auto move : moves) {
+        move.doMove(copy[move.getTargetSphere()]);
+      }
+      renderFrame(copy, passOffset + i, directory);
+      i++;
+    }
+
+    for (int i = 0; i < copy.size(); i++) {
+      spheres[i] = copy[i];
     }
   }
-
-  for (int i = 0; i < threadCount; i++) {
-    threads[i].join();
+  else {
+    int i = startIndex;
+    while (i < endIndex) {
+      for (auto move : moves) {
+        move.doMove(spheres[move.getTargetSphere()]);
+      }
+      if (threadMethod == "p") {
+        partitionAndRender(spheres, passOffset + i, directory, 8);
+      }
+      else {
+        threadPartitionRender(spheres, passOffset + i, directory, 8);
+      }
+      i++;
+    }
   }
 }

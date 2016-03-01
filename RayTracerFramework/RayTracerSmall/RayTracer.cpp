@@ -99,7 +99,7 @@ Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere>
   return surfaceColor + sphere->emissionColor;
 }
 
-void threadedRender(int startIndex, int endIndex, int width, int startHeight, int endHeight, float invWidth, float invHeight, float angle, float aspectratio) {
+void threadedRender(int startIndex, int width, int startHeight, int endHeight, float invWidth, float invHeight, float angle, float aspectratio) {
   Vec3f* pixel = image + startIndex;
 
   for (unsigned y = startHeight; y < endHeight; ++y) {
@@ -197,37 +197,21 @@ void threadPoolRender(int numThreads, int iteration, std::string& directory) {
   speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
 }
 
-void partionedRender(int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio) {
-  int totalPixels = width * height;
+void partionedRender(int numThreads, int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio) {
   int threadWorkload = 0;
-  int remainder = 0;
   int heightRemainder = 0;
-  int widthRemainder = 0;
   int dividedHeight = 0;
-  int dividedWidth = 0;
   std::vector<std::thread> threads;
-  int numThreads = 8;
 
-  //threadWorkload = totalPixels / numThreads;
   dividedHeight = height / numThreads;
-  dividedWidth = width / numThreads;
-
-  if (totalPixels % numThreads != 0) {
-    remainder = totalPixels - (threadWorkload * (numThreads - 1));
-  }
 
   if (height % numThreads != 0) {
     heightRemainder = height - (dividedHeight * (numThreads - 1));
   }
 
-  if (width % numThreads != 0) {
-    widthRemainder = width - (dividedWidth * (numThreads - 1));
-  }
-
   threadWorkload = dividedHeight * width;
 
   for (int i = 0; i < numThreads; i++) {
-    int end = (i * threadWorkload) + threadWorkload;
     int heightEnd = (i * dividedHeight) + dividedHeight;
 
     if (i == (numThreads - 1) && heightRemainder > 0) {
@@ -235,7 +219,7 @@ void partionedRender(int top, int width, int height, float invWidth, float invHe
     }
 
 
-    threads.push_back(std::thread(threadedRender, (top * width) + (i * threadWorkload), end, width, top + (i * dividedHeight),  top + heightEnd, invWidth, invHeight, angle, aspectratio));
+    threads.push_back(std::thread(threadedRender, (top * width) + (i * threadWorkload), width, top + (i * dividedHeight),  top + heightEnd, invWidth, invHeight, angle, aspectratio));
   }
 
   for (int i = 0; i < numThreads; i++) {
@@ -248,8 +232,8 @@ void partionedRender(int top, int width, int height, float invWidth, float invHe
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void render(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
-  start = std::chrono::system_clock::now();
+void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
+  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
   // quick and dirty
 #ifdef _DEBUG
@@ -257,12 +241,8 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
 #else
   unsigned width = 1920, height = 1080;
 #endif
-  // Recommended Testing Resolution
-  //unsigned width = 640, height = 480;
 
-  // Recommended Production Resolution
-  //unsigned width = 1920, height = 1080;
-  Vec3f* image = new Vec3f[width * height];//, *pixel = image;
+  Vec3f* image = new Vec3f[width * height];
   Vec3f* pixel = image;
   float invWidth = 1 / float(width), invHeight = 1 / float(height);
   float fov = 30, aspectratio = width / float(height);
@@ -304,7 +284,6 @@ void render(const std::vector<Sphere> &spheres, int iteration, std::string& dire
 
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - start;
-  total_elapsed_time += elapsed_time;
   std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
   speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
 }
@@ -338,10 +317,10 @@ void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::
 
 	dividedHeight = height / 4;
 
-	partionedRender(0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(numThreads, 0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(numThreads, dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(numThreads, dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(numThreads, dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
 
 	// Save result to a PPM image (keep these flags if you compile under Windows)
 	std::stringstream ss;
@@ -401,41 +380,24 @@ void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, st
 	int dividedHeight = 0;
 	int dividedWidth = 0;
 
-	threadWorkload = totalPixels / 8;
-	dividedHeight = height / 8;
-	dividedWidth = width / 8;
+	threadWorkload = totalPixels / numThreads;
+	dividedHeight = height / numThreads;
+	dividedWidth = width / numThreads;
 
-	if (totalPixels % 8 != 0) {
-	  remainder = totalPixels - (threadWorkload * (8 - 1));
+	if (height % numThreads != 0) {
+	  heightRemainder = height - (dividedHeight * (numThreads - 1));
 	}
 
-	if (height % 8 != 0) {
-	  heightRemainder = height - (dividedHeight * (8 - 1));
-	}
-
-	if (width % 8 != 0) {
-	  widthRemainder = width - (dividedWidth * (8 - 1));
-	}
-
-	for (int i = 0; i < 8; i++) {
-	  int end = (i * threadWorkload) + threadWorkload;
+	for (int i = 0; i < numThreads; i++) {
 	  int heightEnd = (i * dividedHeight) + dividedHeight;
-	  int widthEnd = (i * dividedWidth) + dividedWidth;
-
-	  if (i == 8 - 1 && remainder > 0) {
-	    end = (i * threadWorkload) + remainder;
-	  }
-	  if (i == 8 - 1 && heightRemainder > 0) {
+	  if (i == numThreads - 1 && heightRemainder > 0) {
 	    heightEnd = (i * dividedHeight) + heightRemainder;
 	  }
-	  if (i == 8 - 1 && widthRemainder > 0) {
-	    widthEnd = (i * dividedWidth) + widthRemainder;
-	  }
 
-	  threads.push_back(std::thread(threadedRender, i * threadWorkload, end, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
+	  threads.push_back(std::thread(threadedRender, i * threadWorkload, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
 	}
 
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < numThreads; i++) {
 	  threads[i].join();
 	}
 
@@ -530,38 +492,4 @@ void rotateZ(Sphere& toRotate, float angle) {
 void scale(Sphere& toScale, float amount) {
   toScale.radius += amount;
   toScale.radius2 = toScale.radius * toScale.radius;
-}
-
-void doPass(int passOffset, int startIndex, int endIndex, std::vector<Move>& moves, std::string& directory) {
-  //std::vector<Sphere> copy;
-
-  //for (Sphere sphere : spheres) {
-  //  copy.push_back(sphere);
-  //}
-
-  //for (auto move : moves) {
-  //  move.doMove(startIndex, copy[move.getTargetSphere()]);
-  //}
-  //int i = startIndex;
-  //while (i < endIndex) {
-  //  for (auto move : moves) {
-  //    move.doMove(copy[move.getTargetSphere()]);
-  //  }
-  //  render(copy, passOffset + i, directory);
-  //  i++;
-  //}
-
-  //for (int i = 0; i < copy.size(); i++) {
-  //  spheres[i] = copy[i];
-  //}
-
-  int i = startIndex;
-  while (i < endIndex) {
-    for (auto move : moves) {
-      move.doMove(spheres[move.getTargetSphere()]);
-    }
-    //partitionAndRender(spheres, passOffset + i, directory, 8);
-		threadPartitionRender(spheres, passOffset + i, directory, 8);
-    i++;
-  }
 }

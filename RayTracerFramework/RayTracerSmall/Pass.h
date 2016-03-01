@@ -12,4 +12,5 @@ private:
   int numFrames, threadCount, passIndex;
   std::string directory, threadMethod;
   std::vector<Move> moves;
+  void doPass(int passIndex, int startIndex, int endIndex);
 };
