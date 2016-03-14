@@ -35,6 +35,8 @@ extern std::chrono::duration<double> total_elapsed_time;
 extern std::ofstream speedResults;
 extern std::vector<Sphere> spheres;
 extern Vec3f* image;
+extern std::vector<Vec3f*> images;
+extern std::mutex vectorMutex;
 
 //[comment]
 // This variable controls the maximum recursion depth
@@ -63,6 +65,8 @@ void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::
 
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
 void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
+
+void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex);
 
 void moveX(Sphere& toMove, float amount);
 

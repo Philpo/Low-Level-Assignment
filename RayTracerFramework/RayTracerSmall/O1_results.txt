@@ -1,366 +1,726 @@
-Finished image render in 0.399948
-Finished image render in 0.319715
-Finished image render in 0.309896
-Finished image render in 0.314651
-Finished image render in 0.32895
-Finished image render in 0.326517
-Finished image render in 0.321841
-Finished image render in 0.328228
-Finished image render in 0.312364
-Finished image render in 0.35784
-Finished image render in 0.315657
-Finished image render in 0.3278
-Finished image render in 0.311421
-Finished image render in 0.314797
-Finished image render in 0.332844
-Finished image render in 0.337366
-Finished image render in 0.316237
-Finished image render in 0.314407
-Finished image render in 0.333079
-Finished image render in 0.334479
-Finished image render in 0.32819
-Finished image render in 0.316698
-Finished image render in 0.337137
-Finished image render in 0.337813
-Finished image render in 0.325178
-Finished image render in 0.325041
-Finished image render in 0.336474
-Finished image render in 0.332361
-Finished image render in 0.329996
-Finished image render in 0.329102
-Finished image render in 0.323718
-Finished image render in 0.3158
-Finished image render in 0.320628
-Finished image render in 0.361872
-Finished image render in 0.327856
-Finished image render in 0.317603
-Finished image render in 0.319188
-Finished image render in 0.343109
-Finished image render in 0.344454
-Finished image render in 0.329433
-Finished image render in 0.341499
-Finished image render in 0.31486
-Finished image render in 0.330867
-Finished image render in 0.342604
-Finished image render in 0.341146
-Finished image render in 0.320375
-Finished image render in 0.32288
-Finished image render in 0.350992
-Finished image render in 0.329839
-Finished image render in 0.320472
-Finished image render in 0.319672
-Finished image render in 0.320049
-Finished image render in 0.343401
-Finished image render in 0.361471
-Finished image render in 0.323729
-Finished image render in 0.323722
-Finished image render in 0.321722
-Finished image render in 0.33032
-Finished image render in 0.338009
-Finished image render in 0.33033
-Finished image render in 0.318481
-Finished image render in 0.344541
-Finished image render in 0.36756
-Finished image render in 0.437823
-Finished image render in 0.33573
-Finished image render in 0.358984
-Finished image render in 0.356958
-Finished image render in 0.354498
-Finished image render in 0.31915
-Finished image render in 0.328293
-Finished image render in 0.316774
-Finished image render in 0.330319
-Finished image render in 0.327202
-Finished image render in 0.324912
-Finished image render in 0.324474
-Finished image render in 0.323565
-Finished image render in 0.346441
-Finished image render in 0.338121
-Finished image render in 0.32742
-Finished image render in 0.324023
-Finished image render in 0.356223
-Finished image render in 0.33369
-Finished image render in 0.322448
-Finished image render in 0.335075
-Finished image render in 0.326067
-Finished image render in 0.339691
-Finished image render in 0.359074
-Finished image render in 0.406073
-Finished image render in 0.360121
-Finished image render in 0.351615
-Finished image render in 0.389257
-Finished image render in 0.33582
-Finished image render in 0.345271
-Finished image render in 0.324355
-Finished image render in 0.353851
-Finished image render in 0.332661
-Finished image render in 0.321841
-Finished image render in 0.35084
-Finished image render in 0.355449
-Finished image render in 0.323597
-Finished image render in 0.322091
-Finished image render in 0.332917
-Finished image render in 0.316032
-Finished image render in 0.332888
-Finished image render in 0.33761
-Finished image render in 0.351411
-Finished image render in 0.323242
-Finished image render in 0.33492
-Finished image render in 0.378796
-Finished image render in 0.338224
-Finished image render in 0.350754
-Finished image render in 0.331166
-Finished image render in 0.384248
-Finished image render in 0.324514
-Finished image render in 0.320769
-Finished image render in 0.324091
-Finished image render in 0.32444
-Finished image render in 0.346628
-Finished image render in 0.333705
-Finished image render in 0.351185
-Finished image render in 0.335039
-Finished image render in 0.328879
-Finished image render in 0.352524
-Finished image render in 0.328752
-Finished image render in 0.317781
-Finished image render in 0.328472
-Finished image render in 0.351975
-Finished image render in 0.344923
-Finished image render in 0.343681
-Finished image render in 0.327544
-Finished image render in 0.361393
-Finished image render in 0.336497
-Finished image render in 0.324961
-Finished image render in 0.323742
-Finished image render in 0.325091
-Finished image render in 0.382692
-Finished image render in 0.322287
-Finished image render in 0.335221
-Finished image render in 0.316545
-Finished image render in 0.324477
-Finished image render in 0.344572
-Finished image render in 0.332461
-Finished image render in 0.363786
-Finished image render in 0.343734
-Finished image render in 0.381281
-Finished image render in 0.400366
-Finished image render in 0.367151
-Finished image render in 0.363285
-Finished image render in 0.315239
-Finished image render in 0.331613
-Finished image render in 0.360527
-Finished image render in 0.360965
-Finished image render in 0.349388
-Finished image render in 0.320202
-Finished image render in 0.342911
-Finished image render in 0.335486
-Finished image render in 0.328095
-Finished image render in 0.335443
-Finished image render in 0.320428
-Finished image render in 0.324556
-Finished image render in 0.33094
-Finished image render in 0.319728
-Finished image render in 0.330638
-Finished image render in 0.329195
-Finished image render in 0.330934
-Finished image render in 0.331922
-Finished image render in 0.331648
-Finished image render in 0.344639
-Finished image render in 0.341191
-Finished image render in 0.343579
-Finished image render in 0.312987
-Finished image render in 0.319655
-Finished image render in 0.333174
-Finished image render in 0.345686
-Finished image render in 0.321399
-Finished image render in 0.316498
-Finished image render in 0.337419
-Finished image render in 0.327511
-Finished image render in 0.340642
-Finished image render in 0.334838
-Finished image render in 0.311686
-Finished image render in 0.310139
-Finished image render in 0.322952
-Finished image render in 0.326231
-Finished image render in 0.337378
-Finished image render in 0.31812
-Finished image render in 0.323011
-Finished image render in 0.360616
-Finished image render in 0.354449
-Finished image render in 0.314726
-Finished image render in 0.30798
-Finished image render in 0.32876
-Finished image render in 0.322287
-Finished image render in 0.318838
-Finished image render in 0.317293
-Finished image render in 0.328357
-Finished image render in 0.308603
-Finished image render in 0.331572
-Finished image render in 0.316434
-Finished image render in 0.321829
-Finished image render in 0.309125
-Finished image render in 0.322907
-Finished image render in 0.338798
-Finished image render in 0.334439
-Finished image render in 0.33448
-Finished image render in 0.320685
-Finished image render in 0.346351
-Finished image render in 0.323442
-Finished image render in 0.315698
-Finished image render in 0.326106
-Finished image render in 0.330422
-Finished image render in 0.34972
-Finished image render in 0.326038
-Finished image render in 0.325843
-Finished image render in 0.325347
-Finished image render in 0.301488
-Finished image render in 0.314706
-Finished image render in 0.31486
-Finished image render in 0.330925
-Finished image render in 0.334503
-Finished image render in 0.307497
-Finished image render in 0.335301
-Finished image render in 0.319582
-Finished image render in 0.301887
-Finished image render in 0.309141
-Finished image render in 0.316305
-Finished image render in 0.343224
-Finished image render in 0.346588
-Finished image render in 0.318655
-Finished image render in 0.327832
-Finished image render in 0.311041
-Finished image render in 0.344662
-Finished image render in 0.338051
-Finished image render in 0.309503
-Finished image render in 0.315725
-Finished image render in 0.338725
-Finished image render in 0.343019
-Finished image render in 0.326232
-Finished image render in 0.313321
-Finished image render in 0.309602
-Finished image render in 0.319485
-Finished image render in 0.332877
-Finished image render in 0.328135
-Finished image render in 0.331601
-Finished image render in 0.33921
-Finished image render in 0.35312
-Finished image render in 0.31911
-Finished image render in 0.326233
-Finished image render in 0.310703
-Finished image render in 0.319366
-Finished image render in 0.337032
-Finished image render in 0.325492
-Finished image render in 0.314012
-Finished image render in 0.308344
-Finished image render in 0.314667
-Finished image render in 0.338417
-Finished image render in 0.320328
-Finished image render in 0.301679
-Finished image render in 0.320906
-Finished image render in 0.321292
-Finished image render in 0.32515
-Finished image render in 0.317476
-Finished image render in 0.331251
-Finished image render in 0.315742
-Finished image render in 0.31582
-Finished image render in 0.356416
-Finished image render in 0.356843
-Finished image render in 0.317402
-Finished image render in 0.312212
-Finished image render in 0.314902
-Finished image render in 0.351117
-Finished image render in 0.318043
-Finished image render in 0.326728
-Finished image render in 0.321074
-Finished image render in 0.316677
-Finished image render in 0.31595
-Finished image render in 0.314984
-Finished image render in 0.341251
-Finished image render in 0.310752
-Finished image render in 0.338363
-Finished image render in 0.309702
-Finished image render in 0.329538
-Finished image render in 0.32188
-Finished image render in 0.309328
-Finished image render in 0.318245
-Finished image render in 0.331675
-Finished image render in 0.327365
-Finished image render in 0.31929
-Finished image render in 0.332142
-Finished image render in 0.339942
-Finished image render in 0.331932
-Finished image render in 0.32402
-Finished image render in 0.316785
-Finished image render in 0.307564
-Finished image render in 0.312797
-Finished image render in 0.318676
-Finished image render in 0.315694
-Finished image render in 0.320701
-Finished image render in 0.33719
-Finished image render in 0.331408
-Finished image render in 0.327336
-Finished image render in 0.317173
-Finished image render in 0.322499
-Finished image render in 0.307529
-Finished image render in 0.346529
-Finished image render in 0.332684
-Finished image render in 0.315744
-Finished image render in 0.324024
-Finished image render in 0.318815
-Finished image render in 0.32484
-Finished image render in 0.326422
-Finished image render in 0.32042
-Finished image render in 0.312999
-Finished image render in 0.338658
-Finished image render in 0.316914
-Finished image render in 0.328492
-Finished image render in 0.317384
-Finished image render in 0.314943
-Finished image render in 0.337168
-Finished image render in 0.319772
-Finished image render in 0.315646
-Finished image render in 0.311904
-Finished image render in 0.314436
-Finished image render in 0.318141
-Finished image render in 0.311625
-Finished image render in 0.319533
-Finished image render in 0.322046
-Finished image render in 0.311341
-Finished image render in 0.319996
-Finished image render in 0.333035
-Finished image render in 0.326029
-Finished image render in 0.31309
-Finished image render in 0.309666
-Finished image render in 0.343005
-Finished image render in 0.334159
-Finished image render in 0.309576
-Finished image render in 0.307595
-Finished image render in 0.309746
-Finished image render in 0.354667
-Finished image render in 0.312883
-Finished image render in 0.311284
-Finished image render in 0.325001
-Finished image render in 0.329653
-Finished image render in 0.324861
-Finished image render in 0.324446
-Finished image render in 0.34972
-Finished image render in 0.338232
-Finished image render in 0.318727
-Finished image render in 0.317774
-Finished image render in 0.319742
-Finished image render in 0.314423
-Finished image render in 0.302763
-Finished image render in 0.318494
-Finished image render in 0.322359
-Finished image render in 0.318048
-Finished image render in 0.309197
-Finished image render in 0.320759
-Finished image render in 0.318842
-Finished image render in 0.331662
-Finished image render in 0.330221
+Finished trace in 0.124665
+Finished saving in 0.206101
+Finished trace in 0.105309
+Finished saving in 0.198567
+Finished trace in 0.115922
+Finished saving in 0.200322
+Finished trace in 0.125666
+Finished saving in 0.196986
+Finished trace in 0.103496
+Finished saving in 0.2178
+Finished trace in 0.130304
+Finished saving in 0.201851
+Finished trace in 0.122
+Finished saving in 0.196388
+Finished trace in 0.113174
+Finished saving in 0.196149
+Finished trace in 0.120206
+Finished saving in 0.196632
+Finished trace in 0.109506
+Finished saving in 0.237884
+Finished trace in 0.112036
+Finished saving in 0.201139
+Finished trace in 0.11759
+Finished saving in 0.197161
+Finished trace in 0.122166
+Finished saving in 0.196332
+Finished trace in 0.120678
+Finished saving in 0.199634
+Finished trace in 0.123925
+Finished saving in 0.199867
+Finished trace in 0.130616
+Finished saving in 0.197607
+Finished trace in 0.119498
+Finished saving in 0.201289
+Finished trace in 0.120135
+Finished saving in 0.198499
+Finished trace in 0.108007
+Finished saving in 0.204162
+Finished trace in 0.133951
+Finished saving in 0.200168
+Finished trace in 0.126177
+Finished saving in 0.201269
+Finished trace in 0.111177
+Finished saving in 0.197817
+Finished trace in 0.118177
+Finished saving in 0.196758
+Finished trace in 0.113653
+Finished saving in 0.198088
+Finished trace in 0.133524
+Finished saving in 0.198586
+Finished trace in 0.119404
+Finished saving in 0.198838
+Finished trace in 0.131174
+Finished saving in 0.197008
+Finished trace in 0.119741
+Finished saving in 0.199015
+Finished trace in 0.135061
+Finished saving in 0.201206
+Finished trace in 0.12152
+Finished saving in 0.197797
+Finished trace in 0.117858
+Finished saving in 0.197195
+Finished trace in 0.1205
+Finished saving in 0.198932
+Finished trace in 0.122031
+Finished saving in 0.195965
+Finished trace in 0.113028
+Finished saving in 0.199179
+Finished trace in 0.122007
+Finished saving in 0.213168
+Finished trace in 0.125515
+Finished saving in 0.1965
+Finished trace in 0.124528
+Finished saving in 0.196076
+Finished trace in 0.116182
+Finished saving in 0.195992
+Finished trace in 0.125688
+Finished saving in 0.20661
+Finished trace in 0.122499
+Finished saving in 0.197853
+Finished trace in 0.123523
+Finished saving in 0.196164
+Finished trace in 0.123416
+Finished saving in 0.19954
+Finished trace in 0.132735
+Finished saving in 0.198073
+Finished trace in 0.125663
+Finished saving in 0.202035
+Finished trace in 0.131066
+Finished saving in 0.201372
+Finished trace in 0.125614
+Finished saving in 0.212119
+Finished trace in 0.12211
+Finished saving in 0.205857
+Finished trace in 0.117859
+Finished saving in 0.229745
+Finished trace in 0.128834
+Finished saving in 0.201331
+Finished trace in 0.123886
+Finished saving in 0.202476
+Finished trace in 0.138506
+Finished saving in 0.197537
+Finished trace in 0.118163
+Finished saving in 0.195661
+Finished trace in 0.119701
+Finished saving in 0.197529
+Finished trace in 0.129997
+Finished saving in 0.197556
+Finished trace in 0.123612
+Finished saving in 0.201067
+Finished trace in 0.119605
+Finished saving in 0.204451
+Finished trace in 0.127743
+Finished saving in 0.241011
+Finished trace in 0.125665
+Finished saving in 0.203544
+Finished trace in 0.114581
+Finished saving in 0.198104
+Finished trace in 0.123128
+Finished saving in 0.197049
+Finished trace in 0.121999
+Finished saving in 0.198298
+Finished trace in 0.125488
+Finished saving in 0.196491
+Finished trace in 0.130192
+Finished saving in 0.202631
+Finished trace in 0.122785
+Finished saving in 0.213282
+Finished trace in 0.125858
+Finished saving in 0.198956
+Finished trace in 0.132714
+Finished saving in 0.209156
+Finished trace in 0.114537
+Finished saving in 0.197944
+Finished trace in 0.119592
+Finished saving in 0.205718
+Finished trace in 0.112506
+Finished saving in 0.200697
+Finished trace in 0.116125
+Finished saving in 0.205744
+Finished trace in 0.134496
+Finished saving in 0.197258
+Finished trace in 0.120109
+Finished saving in 0.197069
+Finished trace in 0.112962
+Finished saving in 0.203875
+Finished trace in 0.111651
+Finished saving in 0.199201
+Finished trace in 0.116007
+Finished saving in 0.202452
+Finished trace in 0.121007
+Finished saving in 0.196341
+Finished trace in 0.135479
+Finished saving in 0.197172
+Finished trace in 0.122171
+Finished saving in 0.20516
+Finished trace in 0.118917
+Finished saving in 0.198668
+Finished trace in 0.11153
+Finished saving in 0.196992
+Finished trace in 0.117847
+Finished saving in 0.201633
+Finished trace in 0.126256
+Finished saving in 0.20714
+Finished trace in 0.131848
+Finished saving in 0.197705
+Finished trace in 0.116269
+Finished saving in 0.198748
+Finished trace in 0.116576
+Finished saving in 0.210208
+Finished trace in 0.131426
+Finished saving in 0.304663
+Finished trace in 0.123681
+Finished saving in 0.201853
+Finished trace in 0.116
+Finished saving in 0.199565
+Finished trace in 0.117693
+Finished saving in 0.200058
+Finished trace in 0.124184
+Finished saving in 0.196468
+Finished trace in 0.130285
+Finished saving in 0.196458
+Finished trace in 0.127185
+Finished saving in 0.209905
+Finished trace in 0.133041
+Finished saving in 0.200992
+Finished trace in 0.123558
+Finished saving in 0.196909
+Finished trace in 0.138945
+Finished saving in 0.196234
+Finished trace in 0.118631
+Finished saving in 0.202343
+Finished trace in 0.1295
+Finished saving in 0.22347
+Finished trace in 0.12451
+Finished saving in 0.198363
+Finished trace in 0.130089
+Finished saving in 0.196559
+Finished trace in 0.122761
+Finished saving in 0.197756
+Finished trace in 0.126128
+Finished saving in 0.196035
+Finished trace in 0.121513
+Finished saving in 0.205071
+Finished trace in 0.118499
+Finished saving in 0.201165
+Finished trace in 0.119528
+Finished saving in 0.196956
+Finished trace in 0.13311
+Finished saving in 0.198525
+Finished trace in 0.12319
+Finished saving in 0.273064
+Finished trace in 0.126654
+Finished saving in 0.203853
+Finished trace in 0.13351
+Finished saving in 0.196099
+Finished trace in 0.11478
+Finished saving in 0.208987
+Finished trace in 0.125665
+Finished saving in 0.197307
+Finished trace in 0.133179
+Finished saving in 0.215921
+Finished trace in 0.127283
+Finished saving in 0.211835
+Finished trace in 0.125011
+Finished saving in 0.208453
+Finished trace in 0.12278
+Finished saving in 0.197234
+Finished trace in 0.119078
+Finished saving in 0.20931
+Finished trace in 0.123818
+Finished saving in 0.211272
+Finished trace in 0.120797
+Finished saving in 0.203095
+Finished trace in 0.11922
+Finished saving in 0.201591
+Finished trace in 0.118315
+Finished saving in 0.197362
+Finished trace in 0.124502
+Finished saving in 0.198553
+Finished trace in 0.132005
+Finished saving in 0.213607
+Finished trace in 0.13244
+Finished saving in 0.201716
+Finished trace in 0.117645
+Finished saving in 0.200023
+Finished trace in 0.118128
+Finished saving in 0.198771
+Finished trace in 0.122516
+Finished saving in 0.199788
+Finished trace in 0.123025
+Finished saving in 0.19759
+Finished trace in 0.122748
+Finished saving in 0.199008
+Finished trace in 0.136158
+Finished saving in 0.212167
+Finished trace in 0.110156
+Finished saving in 0.197014
+Finished trace in 0.110199
+Finished saving in 0.200063
+Finished trace in 0.124514
+Finished saving in 0.197843
+Finished trace in 0.125626
+Finished saving in 0.198107
+Finished trace in 0.127667
+Finished saving in 0.199015
+Finished trace in 0.115704
+Finished saving in 0.199021
+Finished trace in 0.115639
+Finished saving in 0.203945
+Finished trace in 0.129018
+Finished saving in 0.197392
+Finished trace in 0.127203
+Finished saving in 0.197057
+Finished trace in 0.133584
+Finished saving in 0.19699
+Finished trace in 0.124014
+Finished saving in 0.199157
+Finished trace in 0.11951
+Finished saving in 0.200843
+Finished trace in 0.1155
+Finished saving in 0.19749
+Finished trace in 0.135139
+Finished saving in 0.201039
+Finished trace in 0.12303
+Finished saving in 0.19887
+Finished trace in 0.129149
+Finished saving in 0.196429
+Finished trace in 0.12612
+Finished saving in 0.219346
+Finished trace in 0.120157
+Finished saving in 0.20139
+Finished trace in 0.120078
+Finished saving in 0.196503
+Finished trace in 0.118154
+Finished saving in 0.196341
+Finished trace in 0.109314
+Finished saving in 0.196782
+Finished trace in 0.129007
+Finished saving in 0.217013
+Finished trace in 0.128867
+Finished saving in 0.199387
+Finished trace in 0.110679
+Finished saving in 0.196956
+Finished trace in 0.117338
+Finished saving in 0.197543
+Finished trace in 0.129015
+Finished saving in 0.196293
+Finished trace in 0.11851
+Finished saving in 0.206651
+Finished trace in 0.119509
+Finished saving in 0.199242
+Finished trace in 0.12156
+Finished saving in 0.213446
+Finished trace in 0.130514
+Finished saving in 0.196658
+Finished trace in 0.114655
+Finished saving in 0.219082
+Finished trace in 0.129195
+Finished saving in 0.205616
+Finished trace in 0.121236
+Finished saving in 0.203765
+Finished trace in 0.110097
+Finished saving in 0.196009
+Finished trace in 0.110178
+Finished saving in 0.203976
+Finished trace in 0.109197
+Finished saving in 0.199068
+Finished trace in 0.128019
+Finished saving in 0.200533
+Finished trace in 0.116226
+Finished saving in 0.199809
+Finished trace in 0.120413
+Finished saving in 0.196163
+Finished trace in 0.12402
+Finished saving in 0.198314
+Finished trace in 0.108162
+Finished saving in 0.29925
+Finished trace in 0.1205
+Finished saving in 0.197781
+Finished trace in 0.138015
+Finished saving in 0.198547
+Finished trace in 0.122727
+Finished saving in 0.197967
+Finished trace in 0.120535
+Finished saving in 0.19793
+Finished trace in 0.110015
+Finished saving in 0.236129
+Finished trace in 0.15417
+Finished saving in 0.199382
+Finished trace in 0.133542
+Finished saving in 0.197549
+Finished trace in 0.1197
+Finished saving in 0.197025
+Finished trace in 0.124999
+Finished saving in 0.197761
+Finished trace in 0.113887
+Finished saving in 0.204322
+Finished trace in 0.117555
+Finished saving in 0.199994
+Finished trace in 0.114499
+Finished saving in 0.199343
+Finished trace in 0.117056
+Finished saving in 0.200776
+Finished trace in 0.11798
+Finished saving in 0.196669
+Finished trace in 0.119497
+Finished saving in 0.205
+Finished trace in 0.128006
+Finished saving in 0.206352
+Finished trace in 0.118667
+Finished saving in 0.19646
+Finished trace in 0.131858
+Finished saving in 0.198903
+Finished trace in 0.120939
+Finished saving in 0.197558
+Finished trace in 0.130675
+Finished saving in 0.212876
+Finished trace in 0.119936
+Finished saving in 0.209787
+Finished trace in 0.111999
+Finished saving in 0.204414
+Finished trace in 0.117272
+Finished saving in 0.197166
+Finished trace in 0.119999
+Finished saving in 0.197135
+Finished trace in 0.132166
+Finished saving in 0.198161
+Finished trace in 0.108885
+Finished saving in 0.198534
+Finished trace in 0.111185
+Finished saving in 0.199186
+Finished trace in 0.112659
+Finished saving in 0.197491
+Finished trace in 0.111565
+Finished saving in 0.196684
+Finished trace in 0.112117
+Finished saving in 0.206535
+Finished trace in 0.10617
+Finished saving in 0.203417
+Finished trace in 0.106991
+Finished saving in 0.200013
+Finished trace in 0.118922
+Finished saving in 0.196181
+Finished trace in 0.115044
+Finished saving in 0.197525
+Finished trace in 0.117003
+Finished saving in 0.230411
+Finished trace in 0.131501
+Finished saving in 0.221743
+Finished trace in 0.111652
+Finished saving in 0.207187
+Finished trace in 0.111484
+Finished saving in 0.197744
+Finished trace in 0.119043
+Finished saving in 0.196482
+Finished trace in 0.111222
+Finished saving in 0.20993
+Finished trace in 0.107678
+Finished saving in 0.199342
+Finished trace in 0.111898
+Finished saving in 0.202016
+Finished trace in 0.114612
+Finished saving in 0.197062
+Finished trace in 0.108013
+Finished saving in 0.196476
+Finished trace in 0.114006
+Finished saving in 0.205205
+Finished trace in 0.113715
+Finished saving in 0.206393
+Finished trace in 0.115032
+Finished saving in 0.197076
+Finished trace in 0.104151
+Finished saving in 0.197495
+Finished trace in 0.120677
+Finished saving in 0.197595
+Finished trace in 0.1165
+Finished saving in 0.202017
+Finished trace in 0.115803
+Finished saving in 0.200491
+Finished trace in 0.110505
+Finished saving in 0.196551
+Finished trace in 0.107035
+Finished saving in 0.209353
+Finished trace in 0.10418
+Finished saving in 0.197511
+Finished trace in 0.10783
+Finished saving in 0.201342
+Finished trace in 0.10632
+Finished saving in 0.199623
+Finished trace in 0.114111
+Finished saving in 0.225911
+Finished trace in 0.109001
+Finished saving in 0.196748
+Finished trace in 0.116088
+Finished saving in 0.197006
+Finished trace in 0.114513
+Finished saving in 0.20699
+Finished trace in 0.123435
+Finished saving in 0.200045
+Finished trace in 0.106085
+Finished saving in 0.196509
+Finished trace in 0.112455
+Finished saving in 0.19639
+Finished trace in 0.119
+Finished saving in 0.198047
+Finished trace in 0.126243
+Finished saving in 0.201258
+Finished trace in 0.109098
+Finished saving in 0.199155
+Finished trace in 0.108637
+Finished saving in 0.198486
+Finished trace in 0.10776
+Finished saving in 0.263488
+Finished trace in 0.119227
+Finished saving in 0.207013
+Finished trace in 0.118497
+Finished saving in 0.199305
+Finished trace in 0.122733
+Finished saving in 0.199621
+Finished trace in 0.1203
+Finished saving in 0.19849
+Finished trace in 0.109128
+Finished saving in 0.200479
+Finished trace in 0.109294
+Finished saving in 0.197095
+Finished trace in 0.137118
+Finished saving in 0.218768
+Finished trace in 0.12616
+Finished saving in 0.198815
+Finished trace in 0.127028
+Finished saving in 0.196968
+Finished trace in 0.114726
+Finished saving in 0.196017
+Finished trace in 0.132
+Finished saving in 0.202462
+Finished trace in 0.122001
+Finished saving in 0.197287
+Finished trace in 0.120141
+Finished saving in 0.197046
+Finished trace in 0.110284
+Finished saving in 0.198289
+Finished trace in 0.130431
+Finished saving in 0.196298
+Finished trace in 0.11963
+Finished saving in 0.207066
+Finished trace in 0.125811
+Finished saving in 0.214031
+Finished trace in 0.116632
+Finished saving in 0.198871
+Finished trace in 0.117535
+Finished saving in 0.19907
+Finished trace in 0.115532
+Finished saving in 0.196936
+Finished trace in 0.116646
+Finished saving in 0.201291
+Finished trace in 0.131818
+Finished saving in 0.203592
+Finished trace in 0.119582
+Finished saving in 0.218138
+Finished trace in 0.133008
+Finished saving in 0.1976
+Finished trace in 0.1175
+Finished saving in 0.201889
+Finished trace in 0.122608
+Finished saving in 0.207726
+Finished trace in 0.115304
+Finished saving in 0.201008
+Finished trace in 0.131998
+Finished saving in 0.196391
+Finished trace in 0.124001
+Finished saving in 0.197834
+Finished trace in 0.110019
+Finished saving in 0.19691
+Finished trace in 0.114999
+Finished saving in 0.204854
+Finished trace in 0.120721
+Finished saving in 0.20252
+Finished trace in 0.133532
+Finished saving in 0.196679
+Finished trace in 0.112214
+Finished saving in 0.198469
+Finished trace in 0.115066
+Finished saving in 0.200234
+Finished trace in 0.112197
+Finished saving in 0.210084
+Finished trace in 0.116578
+Finished saving in 0.20044
+Finished trace in 0.113918
+Finished saving in 0.196388
+Finished trace in 0.111192
+Finished saving in 0.196479
+Finished trace in 0.111086
+Finished saving in 0.198484
+Finished trace in 0.106014
+Finished saving in 0.228176
+Finished trace in 0.118023
+Finished saving in 0.200626
+Finished trace in 0.10709
+Finished saving in 0.196848
+Finished trace in 0.110633
+Finished saving in 0.20052
+Finished trace in 0.104468
+Finished saving in 0.196451
+Finished trace in 0.103014
+Finished saving in 0.203333
+Finished trace in 0.102698
+Finished saving in 0.204978
+Finished trace in 0.108169
+Finished saving in 0.196732
+Finished trace in 0.105636
+Finished saving in 0.208056
+Finished trace in 0.110379
+Finished saving in 0.196472
+Finished trace in 0.105794
+Finished saving in 0.216909
+Finished trace in 0.115673
+Finished saving in 0.202138
+Finished trace in 0.103761
+Finished saving in 0.196646
+Finished trace in 0.110441
+Finished saving in 0.196492
+Finished trace in 0.101154
+Finished saving in 0.19793
+Finished trace in 0.116347
+Finished saving in 0.217647
+Finished trace in 0.114416
+Finished saving in 0.200036
+Finished trace in 0.118811
+Finished saving in 0.196483
+Finished trace in 0.118504
+Finished saving in 0.197165
+Finished trace in 0.109107
+Finished saving in 0.196458
+Finished trace in 0.110944
+Finished saving in 0.202743
+Finished trace in 0.108733
+Finished saving in 0.201964
+Finished trace in 0.1255
+Finished saving in 0.196647
+Finished trace in 0.115665
+Finished saving in 0.200505
+Finished trace in 0.112669
+Finished saving in 0.207011
+Finished trace in 0.111537
+Finished saving in 0.225639
+Finished trace in 0.113854
+Finished saving in 0.200968
+Finished trace in 0.107322
+Finished saving in 0.196337
+Finished trace in 0.128991
+Finished saving in 0.196968
+Finished trace in 0.113
+Finished saving in 0.199273
+Finished trace in 0.111001
+Finished saving in 0.202869
+Finished trace in 0.1306
+Finished saving in 0.199996
+Finished trace in 0.124478
+Finished saving in 0.199735
+Finished trace in 0.119248
+Finished saving in 0.195911
+Finished trace in 0.123451
+Finished saving in 0.196957
+Finished trace in 0.119485
+Finished saving in 0.237121
+Finished trace in 0.125394
+Finished saving in 0.203649
+Finished trace in 0.126509
+Finished saving in 0.197185
+Finished trace in 0.128005
+Finished saving in 0.19717
+Finished trace in 0.122195
+Finished saving in 0.198967
+Finished trace in 0.152
+Finished saving in 0.200843
+Finished trace in 0.117838
+Finished saving in 0.199982
+Finished trace in 0.11569
+Finished saving in 0.199462
+Finished trace in 0.115033
+Finished saving in 0.211902
+Finished trace in 0.126612
+Finished saving in 0.19848
+Finished trace in 0.118336
+Finished saving in 0.198013
+Finished trace in 0.116105
+Finished saving in 0.199472
+Finished trace in 0.123148
+Finished saving in 0.197925
+Finished trace in 0.131689
+Finished saving in 0.195888
+Finished trace in 0.117175
+Finished saving in 0.198201
+Finished trace in 0.124032
+Finished saving in 0.198215
+Finished trace in 0.138256
+Finished saving in 0.197208
+Finished trace in 0.105657
+Finished saving in 0.197598
+Finished trace in 0.11768
+Finished saving in 0.196502
+Finished trace in 0.122034
+Finished saving in 0.200293
+Finished trace in 0.129813
+Finished saving in 0.200195
+Finished trace in 0.135669
+Finished saving in 0.196503
+Finished trace in 0.121926
+Finished saving in 0.196967
+Finished trace in 0.117105
+Finished saving in 0.19797
+Finished trace in 0.125007
+Finished saving in 0.200961
+Finished trace in 0.129392
+Finished saving in 0.199511
+Finished trace in 0.117145
+Finished saving in 0.198939
+Finished trace in 0.110866
+Finished saving in 0.197633
+Finished trace in 0.114005
+Finished saving in 0.196321
+Finished trace in 0.115552
+Finished saving in 0.197522
+Finished trace in 0.125394
+Finished saving in 0.200034
+Finished trace in 0.1235
+Finished saving in 0.199151
+Finished trace in 0.115196
+Finished saving in 0.196648
+Finished trace in 0.125165
+Finished saving in 0.196497
+Finished trace in 0.115202
+Finished saving in 0.20036
+Finished trace in 0.11586
+Finished saving in 0.197435
+Finished trace in 0.115018
+Finished saving in 0.201254
+Finished trace in 0.131499
+Finished saving in 0.199311
+Finished trace in 0.111715
+Finished saving in 0.211951
+Finished trace in 0.112821
+Finished saving in 0.199685
+Finished trace in 0.125499
+Finished saving in 0.198332
+Finished trace in 0.11851
+Finished saving in 0.200545
+Finished trace in 0.110998
+Finished saving in 0.197004
+Finished trace in 0.111747
+Finished saving in 0.197104
+Finished trace in 0.107629
+Finished saving in 0.200059
+Finished trace in 0.115161
+Finished saving in 0.203175
+Finished trace in 0.123498
+Finished saving in 0.204141
+Finished trace in 0.107499
+Finished saving in 0.19785
 **********************
-Finished video render in 5.36283
+Finished video render in 21.6679
 **********************
 **********************
-Total Render Time: 124.15
+Total Render Time: 137.686
 **********************
