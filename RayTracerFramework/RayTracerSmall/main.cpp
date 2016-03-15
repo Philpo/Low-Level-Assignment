@@ -170,6 +170,11 @@ int main(int argc, char **argv) {
     speedResults << "**********************" << std::endl;
 
     speedResults.close();
+
+#ifndef _DEBUG
+		string command = "del " + directory + "\\*.ppm";
+		system(command.c_str());
+#endif
   }
 
   system("PAUSE");
