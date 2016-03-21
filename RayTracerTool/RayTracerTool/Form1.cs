@@ -100,7 +100,7 @@ namespace RayTracerTool {
       int sphereCount = 0;
       while (sphereCount < spheresLayout.treeView1.Nodes.Count) {
         TreeNode node = new TreeNode();
-        node.Text = "sphere" + (sphereCount + 1);
+        node.Text = "sphere " + (sphereCount + 1);
         node.Tag = new Move();
         passLayout.treeView1.Nodes.Add(node);
         sphereCount++;
