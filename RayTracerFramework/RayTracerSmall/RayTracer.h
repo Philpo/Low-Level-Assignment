@@ -55,16 +55,18 @@ float mix(const float &a, const float &b, const float &mix);
 // is the color of the object at the intersection point, otherwise it returns
 // the background color.
 //[/comment]
-Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere> &spheres, const int &depth);
+Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere> &spheres, const int &depth, bool deferSaving);
 
 // renders an individual frame using one thread; the multi-threading aspect come from computing frames on multiple threads
-void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory);
+void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving);
 
 // partition the screen into quarters and compute each partition using numThreads threads
-void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
+void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
-void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads);
+void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
+
+void fileSave(int iteration, std::string& directory, bool upateTime);
 
 void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex);
 

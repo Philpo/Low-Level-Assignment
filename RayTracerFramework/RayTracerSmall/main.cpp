@@ -2,7 +2,7 @@
 // A very basic raytracer example.
 // [/header]
 // [compile]
-// c++ -o raytracer -O3 -Wall raytracer.cpp
+// c++ -o raytracer -O3 -Wall rayTracer->cpp
 // [/compile]
 // [ignore]
 // Copyright (C) 2012  www.scratchapixel.com
@@ -24,7 +24,7 @@
 #include <thread>
 #include "RapidXML\rapidxml.hpp"
 #include "RapidXML\rapidxml_utils.hpp"
-#include "RayTracer.h"
+#include "rayTracer.h"
 #include "StringUtils.h"
 #include "Pass.h"
 
@@ -33,10 +33,10 @@ using namespace rapidxml;
 int main(int argc, char **argv) {
   srand(13);
 
-  std::string spheresFilePath, movesFilePath, threadMethod;
+  std::string spheresFilePath, movesFilePath, threadMethod, ioMethod, outputFile;
 	int numThreads = 1;
 
-  if (argc == 6 || argc == 7) {
+  if (argc == 9 || argc == 10) {
     numThreads = 0;
     for (int i = 1; i < 5; i += 2) {
       if (strcmp(argv[i], "-i") == 0) {
@@ -47,15 +47,30 @@ int main(int argc, char **argv) {
       }
     }
 
-		if (argc == 6) {
+		if (argc == 9) {
 			if (strcmp(argv[5], "-tf") == 0) {
 				threadMethod = "tf";
 			}
       else {
         return -1;
       }
+      if (strcmp(argv[6], "-tio") == 0) {
+        ioMethod = "tio";
+      }
+      else if (strcmp(argv[6], "-io") == 0) {
+        ioMethod = "io";
+      }
+      else {
+        return -1;
+      }
+      if (strcmp(argv[7], "-f") == 0) {
+        outputFile == argv[8];
+      }
+      else {
+        return -1;
+      }
 		}
-		else if (argc == 7) {
+		else if (argc == 10) {
 			if (strcmp(argv[5], "-p") == 0) {
 				threadMethod = "p";
 				numThreads = convertStringToNumber<int>(argv[6]);
@@ -64,6 +79,21 @@ int main(int argc, char **argv) {
 				threadMethod = "tp";
 				numThreads = convertStringToNumber<int>(argv[6]);
 			}
+      else {
+        return -1;
+      }
+      if (strcmp(argv[7], "-tio") == 0) {
+        ioMethod = "tio";
+      }
+      else if (strcmp(argv[7], "-io") == 0) {
+        ioMethod = "io";
+      }
+      else {
+        return -1;
+      }
+      if (strcmp(argv[8], "-f") == 0) {
+        outputFile == argv[9];
+      }
       else {
         return -1;
       }
@@ -126,6 +156,8 @@ int main(int argc, char **argv) {
       return 0;
     }
 
+    speedResults.open(outputFile);
+
     try {
       file<> passFile(movesFilePath.c_str());
       xml_document<> doc;
@@ -133,7 +165,7 @@ int main(int argc, char **argv) {
       xml_node<>* rootNode = doc.first_node();
 
       for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
-        passes.push_back(Pass(passNode, directory, passCount++, threadMethod, numThreads));
+        passes.push_back(Pass(passNode, directory, passCount++, threadMethod, numThreads, ioMethod));
       }
     }
     catch (parse_error& e) {
@@ -148,10 +180,10 @@ int main(int argc, char **argv) {
       pass.render();
     }
 
-    start = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     std::string ffmpegCommand = "ffmpeg -i .\\" + directory + "\\spheres%03d.ppm -y .\\" + directory + "\\out.mp4";
     system(ffmpegCommand.c_str());
-    endTime = std::chrono::system_clock::now();
+    std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_time = endTime - start;
     total_elapsed_time += elapsed_time;
 

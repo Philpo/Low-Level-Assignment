@@ -4,7 +4,7 @@
 std::chrono::time_point<std::chrono::system_clock> start;
 std::chrono::time_point<std::chrono::system_clock> endTime;
 std::chrono::duration<double> total_elapsed_time;
-std::ofstream speedResults("O1_results.txt");
+std::ofstream speedResults;
 std::vector<Sphere> spheres;
 Vec3f* image;
 std::vector<Vec3f*> images;
@@ -116,89 +116,6 @@ void threadedRender(int startIndex, int width, int startHeight, int endHeight, f
   }
 }
 
-void threadedRay(int x, int y, int width, float invHeight, float invWidth, float angle, float aspectratio) {
-  Vec3f* pixel = image + ((y * width) + x);
-
-  float xx = (2 * ((x + 0.5) * invWidth) - 1) * angle * aspectratio;
-  float yy = (1 - 2 * ((y + 0.5) * invHeight)) * angle;
-  Vec3f raydir(xx, yy, -1);
-  raydir.normalize();
-  Vec3f result = trace(Vec3f(0), raydir, spheres, 0);
-  *pixel = result;
-}
-
-void threadPoolRender(int numThreads, int iteration, std::string& directory) {
-  start = std::chrono::system_clock::now();
-
-  // quick and dirty
-#ifdef _DEBUG
-  unsigned width = 640, height = 480;
-#else
-  unsigned width = 1920, height = 1080;
-#endif
-  // Recommended Testing Resolution
-  //unsigned width = 640, height = 480;
-
-  // Recommended Production Resolution
-  //unsigned width = 1920, height = 1080;
-  image = new Vec3f[width * height];//, *pixel = image;
-  Vec3f* pixel = image;
-  float invWidth = 1 / float(width), invHeight = 1 / float(height);
-  float fov = 30, aspectratio = width / float(height);
-  float angle = tan(M_PI * 0.5 * fov / 180.);
-
-  ThreadPool* pool = new ThreadPool(numThreads);
-
-  int totalPixels = width * height;
-  RayData data;
-  data.width = width;
-  data.invHeight = invHeight;
-  data.invWidth = invWidth;
-  data.angle = angle;
-  data.aspectratio = aspectratio;
-
-  for (unsigned y = 0; y < height; ++y) {
-    for (unsigned x = 0; x < width; ++x, ++pixel) {
-      std::cout << "(" << x << "," << y << ")" << std::endl;
-      data.x = x;
-      data.y = y;
-      pool->enqueue(threadedRay, data);
-    }
-  }
-
-  delete pool;
-
-  // Save result to a PPM image (keep these flags if you compile under Windows)
-  std::stringstream ss;
-  if (iteration < 10) {
-    ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
-  }
-  else if (iteration < 100) {
-    ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
-  }
-  else {
-    ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
-  }
-  std::string tempString = ss.str();
-  char* filename = (char*) tempString.c_str();
-
-  std::ofstream ofs(filename, std::ios::out | std::ios::binary);
-  ofs << "P6\n" << width << " " << height << "\n255\n";
-  for (unsigned i = 0; i < width * height; ++i) {
-    ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
-      (unsigned char) (std::min(float(1), image[i].y) * 255) <<
-      (unsigned char) (std::min(float(1), image[i].z) * 255);
-  }
-  ofs.close();
-  delete[] image;
-
-  endTime = std::chrono::system_clock::now();
-  std::chrono::duration<double> elapsed_time = endTime - start;
-  total_elapsed_time += elapsed_time;
-  std::cout << "Finished image render in " << elapsed_time.count() << std::endl;
-  speedResults << "Finished image render in " << elapsed_time.count() << std::endl;
-}
-
 void partionedRender(int numThreads, int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio) {
   int threadWorkload = 0;
   int heightRemainder = 0;
@@ -234,7 +151,7 @@ void partionedRender(int numThreads, int top, int width, int height, float invWi
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory) {
+void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving) {
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
   // quick and dirty
@@ -265,44 +182,18 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  {
-    std::unique_lock<std::mutex> lock(vectorMutex);
-    images[iteration] = image;
+  if (deferSaving) {
+    {
+      std::unique_lock<std::mutex> lock(vectorMutex);
+      images[iteration] = image;
+    }
   }
-
-  //std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
-
-  //// Save result to a PPM image (keep these flags if you compile under Windows)
-  //std::stringstream ss;
-  //if (iteration < 10) {
-  //  ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
-  //}
-  //else if (iteration < 100) {
-  //  ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
-  //}
-  //else {
-  //  ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
-  //}
-  //std::string tempString = ss.str();
-  //char* filename = (char*) tempString.c_str();
-
-  //std::ofstream ofs(filename, std::ios::out | std::ios::binary);
-  //ofs << "P6\n" << width << " " << height << "\n255\n";
-  //for (unsigned i = 0; i < width * height; ++i) {
-  //  ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].y) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].z) * 255);
-  //}
-  //ofs.close();
-  //delete[] image;
-
-  //endTime = std::chrono::system_clock::now();
-  //elapsed_time = endTime - savingStart;
-  //std::cout << "Finished saving in " << elapsed_time.count() << std::endl;
-  //speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
+  else {
+    fileSave(iteration, directory, true);
+  }
 }
 
-void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads) {
+void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
 	// quick and dirty
@@ -336,48 +227,21 @@ void partitionAndRender(const std::vector<Sphere> &spheres, int iteration, std::
 	partionedRender(numThreads, dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
 	partionedRender(numThreads, dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
 
-  images[iteration] = image;
-
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - start;
   total_elapsed_time += elapsed_time;
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  //std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
-
-  //// Save result to a PPM image (keep these flags if you compile under Windows)
-  //std::stringstream ss;
-  //if (iteration < 10) {
-  //  ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
-  //}
-  //else if (iteration < 100) {
-  //  ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
-  //}
-  //else {
-  //  ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
-  //}
-  //std::string tempString = ss.str();
-  //char* filename = (char*) tempString.c_str();
-
-  //std::ofstream ofs(filename, std::ios::out | std::ios::binary);
-  //ofs << "P6\n" << width << " " << height << "\n255\n";
-  //for (unsigned i = 0; i < width * height; ++i) {
-  //  ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].y) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].z) * 255);
-  //}
-  //ofs.close();
-  //delete[] image;
-
-  //endTime = std::chrono::system_clock::now();
-  //elapsed_time = endTime - savingStart;
-  //total_elapsed_time += elapsed_time;
-  //std::cout << "Finished saving in " << elapsed_time.count() << std::endl;
-  //speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
+  if (deferSaving) {
+    images[iteration] = image;
+  }
+  else {
+    fileSave(iteration, directory, true);
+  }
 }
 
-void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, std::string& directory, int numThreads) {
+void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
 	// quick and dirty
@@ -425,45 +289,60 @@ void threadPartitionRender(const std::vector<Sphere> &spheres, int iteration, st
 	  threads[i].join();
   }
 
-  images[iteration] = image;
-
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - start;
   total_elapsed_time += elapsed_time;
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  //std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
+  if (deferSaving) {
+    images[iteration] = image;
+  }
+  else {
+    fileSave(iteration, directory, true);
+  }
+}
 
-  //// Save result to a PPM image (keep these flags if you compile under Windows)
-  //std::stringstream ss;
-  //if (iteration < 10) {
-  //  ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
-  //}
-  //else if (iteration < 100) {
-  //  ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
-  //}
-  //else {
-  //  ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
-  //}
-  //std::string tempString = ss.str();
-  //char* filename = (char*) tempString.c_str();
+void fileSave(int iteration, std::string& directory, bool updateTime) {
+#ifdef _DEBUG
+  unsigned width = 640, height = 480;
+#else
+  unsigned width = 1920, height = 1080;
+#endif
 
-  //std::ofstream ofs(filename, std::ios::out | std::ios::binary);
-  //ofs << "P6\n" << width << " " << height << "\n255\n";
-  //for (unsigned i = 0; i < width * height; ++i) {
-  //  ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].y) * 255) <<
-  //    (unsigned char) (std::min(float(1), image[i].z) * 255);
-  //}
-  //ofs.close();
-  //delete[] image;
+  std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
 
-  //endTime = std::chrono::system_clock::now();
-  //elapsed_time = endTime - savingStart;
-  //total_elapsed_time += elapsed_time;
-  //std::cout << "Finished saving in " << elapsed_time.count() << std::endl;
-  //speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
+  // Save result to a PPM image (keep these flags if you compile under Windows)
+  std::stringstream ss;
+  if (iteration < 10) {
+    ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
+  }
+  else if (iteration < 100) {
+    ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
+  }
+  else {
+    ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
+  }
+  std::string tempString = ss.str();
+  char* filename = (char*) tempString.c_str();
+
+  std::ofstream ofs(filename, std::ios::out | std::ios::binary);
+  ofs << "P6\n" << width << " " << height << "\n255\n";
+  for (unsigned i = 0; i < width * height; ++i) {
+    ofs << (unsigned char) (std::min(float(1), image[i].x) * 255) <<
+      (unsigned char) (std::min(float(1), image[i].y) * 255) <<
+      (unsigned char) (std::min(float(1), image[i].z) * 255);
+  }
+  ofs.close();
+  delete[] image;
+
+  endTime = std::chrono::system_clock::now();
+  std::chrono::duration<double> elapsed_time = endTime - savingStart;
+  if (updateTime) {
+    total_elapsed_time += elapsed_time;
+  }
+  std::cout << "Finished saving in " << elapsed_time.count() << std::endl;
+  speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
 }
 
 void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex) {

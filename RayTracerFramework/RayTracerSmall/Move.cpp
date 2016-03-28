@@ -1,6 +1,6 @@
 #include "Move.h"
 
-Move::Move(xml_node<>* moveNode, std::vector<Sphere>& spheres) {
+Move::Move(xml_node<>* moveNode) {
   amount = convertStringToNumber<float>(moveNode->first_attribute("amount")->value());
   targetSphere = convertStringToNumber<int>(moveNode->first_attribute("target")->value());
   target = spheres[convertStringToNumber<int>(moveNode->first_attribute("target")->value())];

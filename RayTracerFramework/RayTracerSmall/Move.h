@@ -10,7 +10,7 @@ typedef void(*moveFunction)(Sphere&, float);
 
 class Move {
 public:
-  Move(xml_node<>* moveNode, std::vector<Sphere>& spheres);
+  Move(xml_node<>* moveNode);
   ~Move() {}
 
   int getTargetSphere() { return targetSphere; }
