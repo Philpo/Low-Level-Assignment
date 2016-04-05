@@ -176,6 +176,10 @@ int main(int argc, char **argv) {
       return 0;
     }
 
+    xml_document<> doc;    // character type defaults to char
+    string text = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
+    doc.parse<0>((char*) &text[0]);
+
     for (Pass pass : passes) {
       pass.render();
     }
