@@ -8,6 +8,7 @@ std::ofstream speedResults;
 std::vector<Sphere> spheres;
 Vec3f* image;
 std::vector<Vec3f*> images;
+LinearAllocator onionAllocator;
 
 float mix(const float &a, const float &b, const float &mix) {
   return b * mix + a * (1 - mix);
@@ -160,7 +161,11 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   unsigned width = 1920, height = 1080;
 #endif
 
-  Vec3f* image = new Vec3f[width * height];
+  size_t totalSize = sizeof(Vec3f)* width * height;
+
+  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+
+  image = reinterpret_cast<Vec3f *>(buffer);
   Vec3f* pixel = image;
   float invWidth = 1 / float(width), invHeight = 1 / float(height);
   float fov = 30, aspectratio = width / float(height);
@@ -194,7 +199,11 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 	unsigned width = 1920, height = 1080;
 #endif
 
-	image = new Vec3f[width * height];
+  size_t totalSize = sizeof(Vec3f)* width * height;
+
+  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+
+  image = reinterpret_cast<Vec3f *>(buffer);
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -237,7 +246,11 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
 	unsigned width = 1920, height = 1080;
 #endif
 
-	image = new Vec3f[width * height];
+  size_t totalSize = sizeof(Vec3f)* width * height;
+
+  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+
+  image = reinterpret_cast<Vec3f *>(buffer);
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -296,13 +309,13 @@ void fileSave(int iteration, std::string& directory, bool updateTime) {
   // Save result to a PPM image (keep these flags if you compile under Windows)
   std::stringstream ss;
   if (iteration < 10) {
-    ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
+    ss << "/" + directory + "/spheres00" << iteration << ".ppm";
   }
   else if (iteration < 100) {
-    ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
+    ss << "/" + directory + "/spheres0" << iteration << ".ppm";
   }
   else {
-    ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
+    ss << "/" + directory + "/spheres" << iteration << ".ppm";
   }
   std::string tempString = ss.str();
   char* filename = (char*) tempString.c_str();
@@ -315,7 +328,7 @@ void fileSave(int iteration, std::string& directory, bool updateTime) {
       (unsigned char) (std::min(float(1), image[i].z) * 255);
   }
   ofs.close();
-  delete[] image;
+  //delete[] image;
 
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - savingStart;

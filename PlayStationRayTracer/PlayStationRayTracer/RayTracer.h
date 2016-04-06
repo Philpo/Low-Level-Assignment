@@ -17,6 +17,11 @@
 #include <thread>
 #include "Vecf.h"
 #include "Sphere.h"
+#include "allocator.h"
+#include <gnmx.h>
+#include <scebase.h>
+#include <kernel.h>
+#include <video_out.h>
 
 class Move;
 
@@ -35,6 +40,8 @@ extern std::ofstream speedResults;
 extern std::vector<Sphere> spheres;
 extern Vec3f* image;
 extern std::vector<Vec3f*> images;
+extern LinearAllocator onionAllocator;
+static const size_t ONION_MEMORY_SIZE = 64 * 1024 * 1024;
 
 //[comment]
 // This variable controls the maximum recursion depth

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<App name="MONGON">
+	<Dll name="xBitmap/xBitmap" version="0.1.0" />
+	<Dll name="xStr/xStr" version="0.1.0" />
+
+	<Component name="xBarPluginVideo">
+		<String name="str0"  str="ビデオ" />
+		<Component name="ItemName">
+			<String name="str0"  str="予約録画" />
+			<String name="str1"  str="予約確認" />
+			<String name="str2"  str="メモリースティック" />
+			<String name="str3"  str="i.LINK" />
+		</Component>
+		<Component name="ItemIcon">
+			<String name="str0"  str="/hostapp/images/0.1.0/XmbTimeReserve.png" />
+			<String name="str1"  str="/hostapp/images/0.1.0/XmbResList.png" />
+			<String name="str2"  str="/hostapp/images/0.1.0/XmbMS.png" />
+			<String name="str3"  str="/hostapp/images/0.1.0/XmbVideo.png" />
+		</Component>
+	</Component>
+</App>

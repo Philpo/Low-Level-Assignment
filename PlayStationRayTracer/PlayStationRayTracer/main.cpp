@@ -21,13 +21,10 @@
 
 // Threading
 #include "rapidxml.hpp"
-#include "allocator.h"
 #include "rayTracer.h"
 #include "StringUtils.h"
 #include "Pass.h"
 #include <fios2.h>
-
-size_t sceLibcHeapSize = 256 * 1024 * 1024;
 
 /*E The FIOS2 default maximum path is 1024, games can normally use a much smaller value. */
 #define MAX_PATH_LENGTH 256
@@ -53,15 +50,15 @@ using namespace sce;
 using namespace sce::Gnmx;
 using namespace rapidxml;
 
-int main(int argc, char **argv)
-{
-  xml_document<> doc;    // character type defaults to char
-  std::string text = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
-  doc.parse<0>((char*) &text[0]);
-  xml_node<>* node = doc.first_node();
-  std::string a = node->value();
+int main(int argc, char **argv) {
+  //xml_document<> doc;    // character type defaults to char
+  //char* z = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
+  //std::string text(z);
+  //doc.parse<0>((char*) &text[0]);
+  //xml_node<>* node = doc.first_node();
+  //std::string a = node->value();
 
-  std::cout << a << std::endl;
+  //std::cout << a << std::endl;
 
   SceFiosParams params = SCE_FIOS_PARAMS_INITIALIZER;
 
@@ -81,6 +78,12 @@ int main(int argc, char **argv)
   params.pMemcpy = memcpy;
 
   sceFiosInitialize(&params);
+
+  int ret = onionAllocator.initialize(kOnionMemorySize, SCE_KERNEL_WB_ONION, SCE_KERNEL_PROT_CPU_RW | SCE_KERNEL_PROT_GPU_ALL);
+
+  if (ret != SCE_OK) {
+    return ret;
+  }
 
   std::string spheresFilePath, movesFilePath, threadMethod, ioMethod, outputFile;
   int numThreads = 1;
@@ -152,7 +155,8 @@ int main(int argc, char **argv)
     auto now = std::time(nullptr);
     std::ostringstream os;
     os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
-    directory = "spheres" + os.str();
+    //directory = "spheres" + os.str();
+    directory = "app0";
 
     //std::string mkdirCommand = "mkdir .\\" + directory;
     //system(mkdirCommand.c_str());
@@ -160,70 +164,129 @@ int main(int argc, char **argv)
     std::vector<Pass> passes;
     int passCount = 0;
 
-    //try {
-    //  file<> sceneFile(spheresFilePath.c_str());
-    //  xml_document<> doc;
-    //  doc.parse<0>(sceneFile.data());
-    //  xml_node<>* rootNode = doc.first_node();
+    char *pInput = NULL;
+    SceFiosSize inputSize = 0;
+    SceFiosSize result = 0;
+    SceFiosFH handle = 0;
+    SceFiosOp op = 0;
+    SceFiosOpenParams openParams = SCE_FIOS_OPENPARAMS_INITIALIZER;
 
-    //  float x, y, z, radius, r, g, b, reflection, transparency, emissionR, emissionG, emissionB;
-    //  reflection = transparency = emissionR = emissionG = emissionB = 0.0f;
+    try {
+      SceFiosOp op = sceFiosFHOpen(NULL, &handle, spheresFilePath.c_str(), &openParams);
+      assert(op != SCE_FIOS_OP_INVALID);
 
-    //  for (xml_node<>* sphereNode = rootNode->first_node(); sphereNode; sphereNode = sphereNode->next_sibling()) {
-    //    x = convertStringToNumber<float>(sphereNode->first_attribute("x")->value());
-    //    y = convertStringToNumber<float>(sphereNode->first_attribute("y")->value());
-    //    z = convertStringToNumber<float>(sphereNode->first_attribute("z")->value());
-    //    radius = convertStringToNumber<float>(sphereNode->first_attribute("radius")->value());
-    //    r = convertStringToNumber<float>(sphereNode->first_attribute("r")->value());
-    //    g = convertStringToNumber<float>(sphereNode->first_attribute("g")->value());
-    //    b = convertStringToNumber<float>(sphereNode->first_attribute("b")->value());
+      result = sceFiosOpSyncWait(op);
+      assert(result == SCE_FIOS_OK);
+      sceFiosOpDelete(op);
 
-    //    if (sphereNode->first_attribute("reflection")) {
-    //      reflection = convertStringToNumber<float>(sphereNode->first_attribute("reflection")->value());
-    //    }
-    //    if (sphereNode->first_attribute("transparency")) {
-    //      transparency = convertStringToNumber<float>(sphereNode->first_attribute("transparency")->value());
-    //    }
-    //    if (sphereNode->first_attribute("emissionR")) {
-    //      emissionR = convertStringToNumber<float>(sphereNode->first_attribute("emissionR")->value());
-    //    }
-    //    if (sphereNode->first_attribute("emissionG")) {
-    //      emissionG = convertStringToNumber<float>(sphereNode->first_attribute("emissionG")->value());
-    //    }
-    //    if (sphereNode->first_attribute("emissionB")) {
-    //      emissionB = convertStringToNumber<float>(sphereNode->first_attribute("emissionB")->value());
-    //    }
+      inputSize = sceFiosFileGetSizeSync(NULL, spheresFilePath.c_str());
 
-    //    spheres.push_back(Sphere(Vec3f(x, y, z), radius, Vec3f(r, g, b), reflection, transparency, Vec3f(emissionR, emissionG, emissionB)));
-    //  }
-    //}
-    //catch (parse_error& e) {
-    //  ofstream errorFile;
-    //  errorFile.open("error_file.txt");
-    //  errorFile << "Error reading scene file " << ": " << e.what() << endl;
-    //  errorFile.close();
-    //  return 0;
-    //}
+      pInput = (char*) malloc((size_t) inputSize);
+      result = sceFiosFileReadSync(NULL, spheresFilePath.c_str(), pInput, inputSize, 0);
+
+      string temp(pInput, inputSize);
+
+      xml_document<> doc;
+      doc.parse<0>((char*) &temp[0]);
+      xml_node<>* rootNode = doc.first_node();
+
+      float x, y, z, radius, r, g, b, reflection, transparency, emissionR, emissionG, emissionB;
+      reflection = transparency = emissionR = emissionG = emissionB = 0.0f;
+
+      for (xml_node<>* sphereNode = rootNode->first_node(); sphereNode; sphereNode = sphereNode->next_sibling()) {
+        x = convertStringToNumber<float>(sphereNode->first_attribute("x")->value());
+        y = convertStringToNumber<float>(sphereNode->first_attribute("y")->value());
+        z = convertStringToNumber<float>(sphereNode->first_attribute("z")->value());
+        radius = convertStringToNumber<float>(sphereNode->first_attribute("radius")->value());
+        r = convertStringToNumber<float>(sphereNode->first_attribute("r")->value());
+        g = convertStringToNumber<float>(sphereNode->first_attribute("g")->value());
+        b = convertStringToNumber<float>(sphereNode->first_attribute("b")->value());
+
+        if (sphereNode->first_attribute("reflection")) {
+          reflection = convertStringToNumber<float>(sphereNode->first_attribute("reflection")->value());
+        }
+        if (sphereNode->first_attribute("transparency")) {
+          transparency = convertStringToNumber<float>(sphereNode->first_attribute("transparency")->value());
+        }
+        if (sphereNode->first_attribute("emissionR")) {
+          emissionR = convertStringToNumber<float>(sphereNode->first_attribute("emissionR")->value());
+        }
+        if (sphereNode->first_attribute("emissionG")) {
+          emissionG = convertStringToNumber<float>(sphereNode->first_attribute("emissionG")->value());
+        }
+        if (sphereNode->first_attribute("emissionB")) {
+          emissionB = convertStringToNumber<float>(sphereNode->first_attribute("emissionB")->value());
+        }
+
+        spheres.push_back(Sphere(Vec3f(x, y, z), radius, Vec3f(r, g, b), reflection, transparency, Vec3f(emissionR, emissionG, emissionB)));
+      }
+
+      free(pInput);
+
+      op = sceFiosFHClose(NULL, handle);
+      result = sceFiosOpSyncWait(op);
+      sceFiosOpDelete(op);
+    }
+    catch (parse_error& e) {
+      ofstream errorFile;
+      errorFile.open("error_file.txt");
+      errorFile << "Error reading scene file " << ": " << e.what() << endl;
+      errorFile.close();
+
+      free(pInput);
+
+      op = sceFiosFHClose(NULL, handle);
+      result = sceFiosOpSyncWait(op);
+      sceFiosOpDelete(op);
+      return 0;
+    }
 
     //speedResults.open(outputFile);
 
-    //try {
-    //  file<> passFile(movesFilePath.c_str());
-    //  xml_document<> doc;
-    //  doc.parse<0>(passFile.data());
-    //  xml_node<>* rootNode = doc.first_node();
+    try {
+      SceFiosOp op = sceFiosFHOpen(NULL, &handle, movesFilePath.c_str(), &openParams);
+      assert(op != SCE_FIOS_OP_INVALID);
 
-    //  for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
-    //    passes.push_back(Pass(passNode, directory, passCount++, threadMethod, numThreads, ioMethod));
-    //  }
-    //}
-    //catch (parse_error& e) {
-    //  ofstream errorFile;
-    //  errorFile.open("error_file.txt");
-    //  errorFile << "Error reading pass file " << ": " << e.what() << endl;
-    //  errorFile.close();
-    //  return 0;
-    //}
+      result = sceFiosOpSyncWait(op);
+      assert(result == SCE_FIOS_OK);
+      sceFiosOpDelete(op);
+
+      inputSize = sceFiosFileGetSizeSync(NULL, movesFilePath.c_str());
+
+      pInput = (char*) malloc((size_t) inputSize);
+      result = sceFiosFileReadSync(NULL, movesFilePath.c_str(), pInput, inputSize, 0);
+
+      string temp(pInput, inputSize);
+
+      xml_document<> doc;
+      doc.parse<0>((char*) &temp[0]);
+      xml_node<>* rootNode = doc.first_node();
+
+      for (xml_node<>* passNode = rootNode->first_node(); passNode; passNode = passNode->next_sibling()) {
+        passes.push_back(Pass(passNode, directory, passCount++, threadMethod, numThreads, ioMethod));
+      }
+      free(pInput);
+
+      op = sceFiosFHClose(NULL, handle);
+      result = sceFiosOpSyncWait(op);
+      sceFiosOpDelete(op);
+    }
+    catch (parse_error& e) {
+      ofstream errorFile;
+      errorFile.open("error_file.txt");
+      errorFile << "Error reading pass file " << ": " << e.what() << endl;
+      errorFile.close();
+
+      free(pInput);
+
+      op = sceFiosFHClose(NULL, handle);
+      result = sceFiosOpSyncWait(op);
+      sceFiosOpDelete(op);
+      return 0;
+    }
+
+    int a = 1;
+    std::cout << "read!" << std::endl;
 
     //xml_document<> doc;    // character type defaults to char
     //string text = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
@@ -233,10 +296,14 @@ int main(int argc, char **argv)
       pass.render();
     }
 
+    //op = sceFiosFileDelete(NULL, "/app0/spheres000.ppm");
+    //result = sceFiosOpSyncWait(op);
+    //sceFiosOpDelete(op);
+
     //for (int i = 0; i < 10; i++)
     //{
     //	BasicRender(i);
     //}
   }
-	return 0;
+  return 0;
 }
