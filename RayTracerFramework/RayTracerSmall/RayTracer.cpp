@@ -6,9 +6,12 @@ std::chrono::time_point<std::chrono::system_clock> endTime;
 std::chrono::duration<double> total_elapsed_time;
 std::ofstream speedResults;
 std::vector<Sphere> spheres;
-Vec3f* image;
 std::vector<Vec3f*> images;
 std::mutex vectorMutex;
+
+void* operator new[](size_t size, off_t& physicalAddress) {
+  return nullptr;
+}
 
 float mix(const float &a, const float &b, const float &mix) {
   return b * mix + a * (1 - mix);
@@ -101,7 +104,7 @@ Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere>
   return surfaceColor + sphere->emissionColor;
 }
 
-void threadedRender(int startIndex, int width, int startHeight, int endHeight, float invWidth, float invHeight, float angle, float aspectratio) {
+void threadedRender(int startIndex, int width, int startHeight, int endHeight, float invWidth, float invHeight, float angle, float aspectratio, Vec3f* image) {
   Vec3f* pixel = image + startIndex;
 
   for (unsigned y = startHeight; y < endHeight; ++y) {
@@ -116,7 +119,7 @@ void threadedRender(int startIndex, int width, int startHeight, int endHeight, f
   }
 }
 
-void partionedRender(int numThreads, int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio) {
+void partionedRender(int numThreads, int top, int width, int height, float invWidth, float invHeight, float angle, float aspectratio, Vec3f* image) {
   int threadWorkload = 0;
   int heightRemainder = 0;
   int dividedHeight = 0;
@@ -138,7 +141,7 @@ void partionedRender(int numThreads, int top, int width, int height, float invWi
     }
 
 
-    threads.push_back(std::thread(threadedRender, (top * width) + (i * threadWorkload), width, top + (i * dividedHeight),  top + heightEnd, invWidth, invHeight, angle, aspectratio));
+    threads.push_back(std::thread(threadedRender, (top * width) + (i * threadWorkload), width, top + (i * dividedHeight),  top + heightEnd, invWidth, invHeight, angle, aspectratio, image));
   }
 
   for (int i = 0; i < numThreads; i++) {
@@ -189,7 +192,7 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
     }
   }
   else {
-    fileSave(iteration, directory, true);
+    fileSave(iteration, directory, true, image);
   }
 }
 
@@ -203,7 +206,7 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 	unsigned width = 1920, height = 1080;
 #endif
 
-	image = new Vec3f[width * height];
+	Vec3f* image = new Vec3f[width * height];
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -222,10 +225,10 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 
 	dividedHeight = height / 4;
 
-	partionedRender(numThreads, 0, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(numThreads, dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(numThreads, dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
-	partionedRender(numThreads, dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio);
+	partionedRender(numThreads, 0, width, dividedHeight, invWidth, invHeight, angle, aspectratio, image);
+  partionedRender(numThreads, dividedHeight, width, dividedHeight, invWidth, invHeight, angle, aspectratio, image);
+  partionedRender(numThreads, dividedHeight * 2, width, dividedHeight, invWidth, invHeight, angle, aspectratio, image);
+  partionedRender(numThreads, dividedHeight * 3, width, dividedHeight, invWidth, invHeight, angle, aspectratio, image);
 
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - start;
@@ -237,7 +240,7 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
     images[iteration] = image;
   }
   else {
-    fileSave(iteration, directory, true);
+    fileSave(iteration, directory, true, image);
   }
 }
 
@@ -251,7 +254,7 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
 	unsigned width = 1920, height = 1080;
 #endif
 
-	image = new Vec3f[width * height];
+	Vec3f* image = new Vec3f[width * height];
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -282,7 +285,7 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
 	    heightEnd = (i * dividedHeight) + heightRemainder;
 	  }
 
-	  threads.push_back(std::thread(threadedRender, i * threadWorkload, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio));
+    threads.push_back(std::thread(threadedRender, i * threadWorkload, width, i * dividedHeight, heightEnd, invWidth, invHeight, angle, aspectratio, image));
 	}
 
 	for (int i = 0; i < numThreads; i++) {
@@ -299,11 +302,11 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
     images[iteration] = image;
   }
   else {
-    fileSave(iteration, directory, true);
+    fileSave(iteration, directory, true, image);
   }
 }
 
-void fileSave(int iteration, std::string& directory, bool updateTime) {
+void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& image) {
 #ifdef _DEBUG
   unsigned width = 640, height = 480;
 #else

@@ -34,7 +34,6 @@ extern std::chrono::time_point<std::chrono::system_clock> endTime;
 extern std::chrono::duration<double> total_elapsed_time;
 extern std::ofstream speedResults;
 extern std::vector<Sphere> spheres;
-extern Vec3f* image;
 extern std::vector<Vec3f*> images;
 extern std::mutex vectorMutex;
 
@@ -66,7 +65,7 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
 void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
-void fileSave(int iteration, std::string& directory, bool upateTime);
+void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image);
 
 void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex);
 
