@@ -78,7 +78,6 @@ copy /Y "$(SCE_ORBIS_SDK_DIR)\target\sce_module\libSceFios2.prx" "$(ProjectDir)\
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\Temp\LLGP\test\RayTracerFramework\RayTracerSmall\RapidXML\rapidxml.hpp" />
-    <ClInclude Include="allocator.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Pass.h" />
     <ClInclude Include="RayTracer.h" />

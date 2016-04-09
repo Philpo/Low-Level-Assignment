@@ -17,7 +17,6 @@
 #include <thread>
 #include "Vecf.h"
 #include "Sphere.h"
-#include "allocator.h"
 #include <gnmx.h>
 #include <scebase.h>
 #include <kernel.h>
@@ -39,8 +38,6 @@ extern std::chrono::duration<double> total_elapsed_time;
 extern std::ofstream speedResults;
 extern std::vector<Sphere> spheres;
 extern std::vector<Vec3f*> images;
-extern LinearAllocator onionAllocator;
-static const size_t ONION_MEMORY_SIZE = 64 * 1024 * 1024;
 
 //[comment]
 // This variable controls the maximum recursion depth
@@ -74,9 +71,9 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
 void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
-void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image);
+void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image, off_t physicalAddress);
 
-void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex);
+void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex, off_t physicalAddress);
 
 void moveX(Sphere& toMove, float amount);
 

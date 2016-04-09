@@ -7,36 +7,35 @@ std::chrono::duration<double> total_elapsed_time;
 std::ofstream speedResults;
 std::vector<Sphere> spheres;
 std::vector<Vec3f*> images;
-LinearAllocator onionAllocator;
+
+template<typename T> inline T alignToPow2(const T size, const T alignment) {
+  return (size + alignment - T(1)) & (~(alignment - T(1)));
+}
 
 void* operator new[](size_t size, off_t& physicalAddress) {
-  int32_t ret = sceKernelAllocateDirectMemory(
-    0,
-    sceKernelGetDirectMemorySize() - 1,
-    size,
-    0,
-    SCE_KERNEL_WB_ONION,
-    &physicalAddress);
+  // ensure requested memory size is 16KiB aligned to prevent allocation error
+  const size_t memoryAlignment = 16UL * 1024UL;
+  size_t alignedSize = alignToPow2(size, memoryAlignment);
+
+  int32_t ret = sceKernelAllocateDirectMemory(0, sceKernelGetDirectMemorySize() - 1, alignedSize, 0, SCE_KERNEL_WB_ONION, &physicalAddress);
 
   assert(ret == SCE_OK);
 
   void* baseAddress = NULL;
-  ret = sceKernelMapDirectMemory(
-    &baseAddress,
-    size,
-    SCE_KERNEL_PROT_CPU_RW | SCE_KERNEL_PROT_GPU_ALL,
-    0,
-    physicalAddress,
-    0);
+  ret = sceKernelMapDirectMemory(&baseAddress, alignedSize, SCE_KERNEL_PROT_CPU_RW | SCE_KERNEL_PROT_GPU_ALL, 0, physicalAddress, 0);
   assert(ret == SCE_OK);
 
   return baseAddress;
 }
 
 void operator delete[](void* data, size_t size, off_t& physicalAddress) {
-  int32_t ret = sceKernelMunmap(data, size);
+  // ensure memory size is 16KiB aligned to properly free allocated memory
+  const size_t memoryAlignment = 16UL * 1024UL;
+  size_t alignedSize = alignToPow2(size, memoryAlignment);
+
+  int32_t ret = sceKernelMunmap(data, alignedSize);
   assert(ret == SCE_OK);
-  ret = sceKernelReleaseDirectMemory(physicalAddress, size);
+  ret = sceKernelReleaseDirectMemory(physicalAddress, alignedSize);
   assert(ret == SCE_OK);
 }
 
@@ -191,11 +190,13 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   unsigned width = 1920, height = 1080;
 #endif
 
+  off_t physicalAddress;
+
   size_t totalSize = sizeof(Vec3f)* width * height;
 
-  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+  //void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
 
-  Vec3f* image = reinterpret_cast<Vec3f *>(buffer);
+  Vec3f* image = reinterpret_cast<Vec3f*>(operator new[](totalSize, physicalAddress));
   Vec3f* pixel = image;
   float invWidth = 1 / float(width), invHeight = 1 / float(height);
   float fov = 30, aspectratio = width / float(height);
@@ -216,7 +217,7 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true);
+  fileSave(iteration, directory, true, image, physicalAddress);
 }
 
 void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
@@ -229,11 +230,12 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 	unsigned width = 1920, height = 1080;
 #endif
 
+  off_t physicalAddress;
   size_t totalSize = sizeof(Vec3f)* width * height;
 
-  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+  //void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
 
-  Vec3f* image = reinterpret_cast<Vec3f *>(buffer);
+  Vec3f* image = reinterpret_cast<Vec3f*>(operator new[](totalSize, physicalAddress));
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -263,7 +265,7 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true);
+  fileSave(iteration, directory, true, image, physicalAddress);
 }
 
 void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
@@ -276,11 +278,12 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
 	unsigned width = 1920, height = 1080;
 #endif
 
+  off_t physicalAddress;
   size_t totalSize = sizeof(Vec3f)* width * height;
 
-  void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
+  //void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
 
-  Vec3f* image = reinterpret_cast<Vec3f *>(buffer);
+  Vec3f* image = reinterpret_cast<Vec3f*>(operator new[](totalSize, physicalAddress));
 	Vec3f* pixel = image;
 	float invWidth = 1 / float(width), invHeight = 1 / float(height);
 	float fov = 30, aspectratio = width / float(height);
@@ -324,10 +327,10 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true);
+  fileSave(iteration, directory, true, image, physicalAddress);
 }
 
-void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& image) {
+void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& image, off_t physicalAddress) {
 #ifdef _DEBUG
   unsigned width = 640, height = 480;
 #else
@@ -339,13 +342,13 @@ void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& im
   // Save result to a PPM image (keep these flags if you compile under Windows)
   std::stringstream ss;
   if (iteration < 10) {
-    ss << "/" + directory + "/spheres00" << iteration << ".ppm";
+    ss << directory + "/spheres00" << iteration << ".ppm";
   }
   else if (iteration < 100) {
-    ss << "/" + directory + "/spheres0" << iteration << ".ppm";
+    ss << directory + "/spheres0" << iteration << ".ppm";
   }
   else {
-    ss << "/" + directory + "/spheres" << iteration << ".ppm";
+    ss << directory + "/spheres" << iteration << ".ppm";
   }
   std::string tempString = ss.str();
   char* filename = (char*) tempString.c_str();
@@ -358,7 +361,7 @@ void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& im
       (unsigned char) (std::min(float(1), image[i].z) * 255);
   }
   ofs.close();
-  //delete[] image;
+  operator delete[](image, sizeof(Vec3f) * height * width, physicalAddress);
 
   endTime = std::chrono::system_clock::now();
   std::chrono::duration<double> elapsed_time = endTime - savingStart;
@@ -369,7 +372,7 @@ void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& im
   speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
 }
 
-void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex) {
+void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex, off_t physicalAddress) {
 #ifdef _DEBUG
   unsigned width = 640, height = 480;
 #else
@@ -380,13 +383,13 @@ void threadedFileSave(int iteration, std::string& directory, int startIndex, int
     std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     std::stringstream ss;
     if (iteration < 10) {
-      ss << ".\\" + directory + "\\spheres00" << iteration << ".ppm";
+      ss << directory + "\\spheres00" << iteration << ".ppm";
     }
     else if (iteration < 100) {
-      ss << ".\\" + directory + "\\spheres0" << iteration << ".ppm";
+      ss << directory + "\\spheres0" << iteration << ".ppm";
     }
     else {
-      ss << ".\\" + directory + "\\spheres" << iteration << ".ppm";
+      ss << directory + "\\spheres" << iteration << ".ppm";
     }
     std::string tempString = ss.str();
     char* filename = (char*) tempString.c_str();
@@ -399,7 +402,8 @@ void threadedFileSave(int iteration, std::string& directory, int startIndex, int
         (unsigned char) (std::min(float(1), images[i][j].z) * 255);
     }
     ofs.close();
-    delete[] images[i];
+    operator delete[](images[i], sizeof(Vec3f) * height * width, physicalAddress);
+    //delete[] images[i];
 
     std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_time = endTime - start;

@@ -51,15 +51,6 @@ using namespace sce::Gnmx;
 using namespace rapidxml;
 
 int main(int argc, char **argv) {
-  //xml_document<> doc;    // character type defaults to char
-  //char* z = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
-  //std::string text(z);
-  //doc.parse<0>((char*) &text[0]);
-  //xml_node<>* node = doc.first_node();
-  //std::string a = node->value();
-
-  //std::cout << a << std::endl;
-
   SceFiosParams params = SCE_FIOS_PARAMS_INITIALIZER;
 
   /*E Provide required storage buffers. */
@@ -78,12 +69,6 @@ int main(int argc, char **argv) {
   params.pMemcpy = memcpy;
 
   sceFiosInitialize(&params);
-
-  int ret = onionAllocator.initialize(kOnionMemorySize, SCE_KERNEL_WB_ONION, SCE_KERNEL_PROT_CPU_RW | SCE_KERNEL_PROT_GPU_ALL);
-
-  if (ret != SCE_OK) {
-    return ret;
-  }
 
   std::string spheresFilePath, movesFilePath, threadMethod, ioMethod, outputFile;
   int numThreads = 1;
@@ -155,11 +140,7 @@ int main(int argc, char **argv) {
     auto now = std::time(nullptr);
     std::ostringstream os;
     os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
-    //directory = "spheres" + os.str();
-    directory = "app0";
-
-    //std::string mkdirCommand = "mkdir .\\" + directory;
-    //system(mkdirCommand.c_str());
+    directory = "/app0/spheres" + os.str();
 
     std::vector<Pass> passes;
     int passCount = 0;
@@ -171,8 +152,14 @@ int main(int argc, char **argv) {
     SceFiosOp op = 0;
     SceFiosOpenParams openParams = SCE_FIOS_OPENPARAMS_INITIALIZER;
 
+    op = sceFiosDirectoryCreate(NULL, directory.c_str());
+    assert(op != SCE_FIOS_OP_INVALID);
+    result = sceFiosOpWait(op);
+    assert(result == SCE_OK);
+    sceFiosOpDelete(op);
+
     try {
-      SceFiosOp op = sceFiosFHOpen(NULL, &handle, spheresFilePath.c_str(), &openParams);
+      op = sceFiosFHOpen(NULL, &handle, spheresFilePath.c_str(), &openParams);
       assert(op != SCE_FIOS_OP_INVALID);
 
       result = sceFiosOpSyncWait(op);
@@ -244,7 +231,7 @@ int main(int argc, char **argv) {
     //speedResults.open(outputFile);
 
     try {
-      SceFiosOp op = sceFiosFHOpen(NULL, &handle, movesFilePath.c_str(), &openParams);
+      op = sceFiosFHOpen(NULL, &handle, movesFilePath.c_str(), &openParams);
       assert(op != SCE_FIOS_OP_INVALID);
 
       result = sceFiosOpSyncWait(op);
@@ -285,13 +272,6 @@ int main(int argc, char **argv) {
       return 0;
     }
 
-    int a = 1;
-    std::cout << "read!" << std::endl;
-
-    //xml_document<> doc;    // character type defaults to char
-    //string text = "<?xml version=\"1.0\" encoding=\"utf - 8\"?><a>a</a>";
-    //doc.parse<0>((char*) &text[0]);
-
     for (Pass pass : passes) {
       pass.render();
     }
@@ -299,11 +279,6 @@ int main(int argc, char **argv) {
     //op = sceFiosFileDelete(NULL, "/app0/spheres000.ppm");
     //result = sceFiosOpSyncWait(op);
     //sceFiosOpDelete(op);
-
-    //for (int i = 0; i < 10; i++)
-    //{
-    //	BasicRender(i);
-    //}
   }
   return 0;
 }

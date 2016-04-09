@@ -25,9 +25,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="allocator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\..\Temp\LLGP\test\RayTracerFramework\RayTracerSmall\RapidXML\rapidxml.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
