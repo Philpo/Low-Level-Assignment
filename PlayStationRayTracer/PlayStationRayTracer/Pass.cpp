@@ -117,6 +117,8 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
   if (threadMethod == "tf") {
     std::vector<Sphere> copy;
 
+    cout << CONTEXT_SIZE << endl;
+
     for (Sphere sphere : spheres) {
       copy.push_back(sphere);
     }
@@ -124,15 +126,61 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
     for (auto move : moves) {
       move.doMove(startIndex, copy[move.getTargetSphere()]);
     }
+
+    int ret = SCE_OK;
+
+    ret = sceSysmoduleLoadModule(SCE_SYSMODULE_FIBER);
+    assert(ret == SCE_OK);
+
+    ret = sceFiberStartContextSizeCheck(0);
+    assert(ret == SCE_OK);
+
+    ret = sceFiberInitialize(&leader.fiber, "leaderFiber", fiberEntryLeader, (uint64_t) &leader, (void*) m_contextBuffer[0], CONTEXT_SIZE, NULL);
+    assert(ret == SCE_OK);
+
+    leader.nextFiber = &followers[0].fiber;
+    leader.directory = directory;
+    leader.spheres = copy;
+    leader.deferSaving = ioMethod == "tio";
+    leader.iteration = ioMethod == "tio" ? startIndex : passOffset + startIndex;
+
+    ret = sceFiberInitialize(&tailFiber, "tailFiber", fiberEntryTail, (uint64_t) &tailFiber, (void*) m_contextBuffer[7], CONTEXT_SIZE, NULL);
+    assert(ret == SCE_OK);
+
     int i = startIndex;
+    int fiberIndex = 0;
     while (i < endIndex) {
       int iteration = ioMethod == "tio" ? i : passOffset + i;
       for (auto move : moves) {
         move.doMove(copy[move.getTargetSphere()]);
       }
-      renderFrame(copy, iteration, directory, ioMethod == "tio");
+
+      ret = sceFiberInitialize(&followers[fiberIndex].fiber, "followerFiber", fiberEntryFollower, (uint64_t) &followers[fiberIndex], (void*) m_contextBuffer[fiberIndex + 1], CONTEXT_SIZE, NULL);
+      assert(ret == SCE_OK);
+
+      if (fiberIndex != 5){
+        followers[fiberIndex].nextFiber = &followers[fiberIndex + 1].fiber;
+      }
+      else{
+        followers[fiberIndex].nextFiber = &tailFiber;
+      }
+
+      followers[fiberIndex].directory = directory;
+      followers[fiberIndex].spheres = copy;
+      followers[fiberIndex].deferSaving = ioMethod == "tio";
+      followers[fiberIndex].iteration = iteration;
+
+      fiberIndex++;
+
+//      renderFrame(copy, iteration, directory, ioMethod == "tio");
       i++;
     }
+
+    uint64_t argOnReturn = 0;
+
+    ret = sceFiberRun(&leader.fiber, 0, &argOnReturn);
+    assert(ret == SCE_OK);
+    assert(argOnReturn == 0);
 
     for (int i = 0; i < copy.size(); i++) {
       spheres[i] = copy[i];
@@ -154,4 +202,30 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
       i++;
     }
   }
+}
+
+void Pass::fiberEntryLeader(uint64_t argOnInitialize, uint64_t argOnRun) {
+  cout << "leader" << endl;
+
+  Fiber* me = (Fiber*) argOnInitialize;
+
+  //renderFrame(me->spheres, me->iteration, me->directory, me->deferSaving);
+  int32_t ret = sceFiberSwitch(me->nextFiber, (uint64_t) me, &argOnRun);
+  assert(ret == SCE_OK);
+}
+
+void Pass::fiberEntryFollower(uint64_t argOnInitialize, uint64_t argOnRun) {
+  cout << "follower" << endl;
+
+  Fiber* me = (Fiber*) argOnInitialize;
+
+  renderFrame(me->spheres, me->iteration, me->directory, me->deferSaving);
+  int32_t ret = sceFiberSwitch(me->nextFiber, (uint64_t) me, &argOnRun);
+  assert(ret == SCE_OK);
+}
+
+void Pass::fiberEntryTail(uint64_t argOnInitialize, uint64_t argOnRun) {
+  cout << "finished" << endl;
+  int ret = sceFiberReturnToThread(0, NULL);
+  assert(ret == SCE_OK);
 }
