@@ -21,6 +21,7 @@
 #include <scebase.h>
 #include <kernel.h>
 #include <video_out.h>
+#include <mutex>
 
 class Move;
 
@@ -38,6 +39,9 @@ extern std::chrono::duration<double> total_elapsed_time;
 extern std::ofstream speedResults;
 extern std::vector<Sphere> spheres;
 extern std::vector<Vec3f*> images;
+extern std::vector<off_t> physicalAddresses;
+extern unsigned width, height;
+extern std::mutex vectorMutex;
 
 //[comment]
 // This variable controls the maximum recursion depth
@@ -71,9 +75,9 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
 void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
-void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image, off_t physicalAddress);
+void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image, off_t& physicalAddress);
 
-void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex, off_t physicalAddress);
+void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex);
 
 void moveX(Sphere& toMove, float amount);
 

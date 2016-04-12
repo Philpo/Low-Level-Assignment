@@ -7,6 +7,14 @@ std::chrono::duration<double> total_elapsed_time;
 std::ofstream speedResults;
 std::vector<Sphere> spheres;
 std::vector<Vec3f*> images;
+std::vector<off_t> physicalAddresses;
+std::mutex vectorMutex;
+
+#ifdef _DEBUG
+unsigned width = 640, height = 480;
+#else
+unsigned width = 1920, height = 1080;
+#endif
 
 template<typename T> inline T alignToPow2(const T size, const T alignment) {
   return (size + alignment - T(1)) & (~(alignment - T(1)));
@@ -183,13 +191,6 @@ void partionedRender(int numThreads, int top, int width, int height, float invWi
 void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving) {
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
-  // quick and dirty
-#ifdef _DEBUG
-  unsigned width = 640, height = 480;
-#else
-  unsigned width = 1920, height = 1080;
-#endif
-
   off_t physicalAddress;
 
   size_t totalSize = sizeof(Vec3f)* width * height;
@@ -217,20 +218,23 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true, image, physicalAddress);
+  if (deferSaving) {
+    {
+      std::unique_lock<std::mutex> lock(vectorMutex);
+      images[iteration] = image;
+      physicalAddresses[iteration] = physicalAddress;
+    }
+  }
+  else {
+    fileSave(iteration, directory, true, image, physicalAddress);
+  }
 }
 
 void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
-	// quick and dirty
-#ifdef _DEBUG
-	unsigned width = 640, height = 480;
-#else
-	unsigned width = 1920, height = 1080;
-#endif
-
   off_t physicalAddress;
+
   size_t totalSize = sizeof(Vec3f)* width * height;
 
   //void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
@@ -265,20 +269,20 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true, image, physicalAddress);
+  if (deferSaving) {
+    images[iteration] = image;
+    physicalAddresses[iteration] = physicalAddress;
+  }
+  else {
+    fileSave(iteration, directory, true, image, physicalAddress);
+  }
 }
 
 void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
-	// quick and dirty
-#ifdef _DEBUG
-	unsigned width = 640, height = 480;
-#else
-	unsigned width = 1920, height = 1080;
-#endif
-
   off_t physicalAddress;
+
   size_t totalSize = sizeof(Vec3f)* width * height;
 
   //void* buffer = onionAllocator.allocate(totalSize, sce::Gnm::kAlignmentOfBufferInBytes);
@@ -327,16 +331,16 @@ void threadPartitionRender(int iteration, std::string& directory, int numThreads
   std::cout << "Finished trace in " << elapsed_time.count() << std::endl;
   speedResults << "Finished trace in " << elapsed_time.count() << std::endl;
 
-  fileSave(iteration, directory, true, image, physicalAddress);
+  if (deferSaving) {
+    images[iteration] = image;
+    physicalAddresses[iteration] = physicalAddress;
+  }
+  else {
+    fileSave(iteration, directory, true, image, physicalAddress);
+  }
 }
 
-void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& image, off_t physicalAddress) {
-#ifdef _DEBUG
-  unsigned width = 640, height = 480;
-#else
-  unsigned width = 1920, height = 1080;
-#endif
-
+void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& image, off_t& physicalAddress) {
   std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
 
   // Save result to a PPM image (keep these flags if you compile under Windows)
@@ -372,13 +376,7 @@ void fileSave(int iteration, std::string& directory, bool updateTime, Vec3f*& im
   speedResults << "Finished saving in " << elapsed_time.count() << std::endl;
 }
 
-void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex, off_t physicalAddress) {
-#ifdef _DEBUG
-  unsigned width = 640, height = 480;
-#else
-  unsigned width = 1920, height = 1080;
-#endif
-
+void threadedFileSave(int iteration, std::string& directory, int startIndex, int endIndex) {
   for (int i = startIndex; i < endIndex; i++) {
     std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     std::stringstream ss;
@@ -402,7 +400,7 @@ void threadedFileSave(int iteration, std::string& directory, int startIndex, int
         (unsigned char) (std::min(float(1), images[i][j].z) * 255);
     }
     ofs.close();
-    operator delete[](images[i], sizeof(Vec3f) * height * width, physicalAddress);
+    operator delete[](images[i], sizeof(Vec3f) * height * width, physicalAddresses[i]);
     //delete[] images[i];
 
     std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();

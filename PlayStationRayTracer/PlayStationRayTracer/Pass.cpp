@@ -16,97 +16,101 @@ Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::str
 }
 
 void Pass::render() {
-  doPass(0, 0, numFrames);
-  //if (threadMethod == "tf") {
-  //  std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
-  //  std::vector<std::thread> threads;
+  //doPass(0, 0, numFrames);
+  if (threadMethod == "tf") {
+    std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
+    std::vector<std::thread> threads;
 
-  //  if (ioMethod == "tio") {
-  //    images.clear();
-  //    images.resize(numFrames);
-  //  }
+    if (ioMethod == "tio") {
+      images.clear();
+      physicalAddresses.clear();
+      images.resize(numFrames);
+      physicalAddresses.resize(numFrames);
+    }
 
-  //  int threadWorkload = 0;
-  //  int remainder = 0;
+    int threadWorkload = 0;
+    int remainder = 0;
 
-  //  threadWorkload = numFrames / threadCount;
+    threadWorkload = numFrames / threadCount;
 
-  //  if (numFrames % threadCount != 0) {
-  //    remainder = numFrames - (threadWorkload * (threadCount - 1));
-  //  }
+    if (numFrames % threadCount != 0) {
+      remainder = numFrames - (threadWorkload * (threadCount - 1));
+    }
 
-  //  for (int i = 0; i < threadCount; i++) {
-  //    if (i == threadCount - 1 && remainder > 0) {
-  //      threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + remainder));
-  //    }
-  //    else {
-  //      threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + threadWorkload));
-  //    }
-  //  }
+    for (int i = 0; i < threadCount; i++) {
+      if (i == threadCount - 1 && remainder > 0) {
+        threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + remainder));
+      }
+      else {
+        threads.push_back(std::thread(&Pass::doPass, this, (passIndex * numFrames), i * threadWorkload, (i * threadWorkload) + threadWorkload));
+      }
+    }
 
-  //  for (int i = 0; i < threadCount; i++) {
-  //    threads[i].join();
-  //  }
+    for (int i = 0; i < threadCount; i++) {
+      threads[i].join();
+    }
 
-  //  if (ioMethod == "tio") {
-  //    threads.clear();
+    if (ioMethod == "tio") {
+      threads.clear();
 
-  //    for (int i = 0; i < threadCount; i++) {
-  //      if (i == threadCount - 1 && remainder > 0) {
-  //        threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + remainder));
-  //      }
-  //      else {
-  //        threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + threadWorkload));
-  //      }
-  //    }
+      for (int i = 0; i < threadCount; i++) {
+        if (i == threadCount - 1 && remainder > 0) {
+          threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + remainder));
+        }
+        else {
+          threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + threadWorkload));
+        }
+      }
 
-  //    for (int i = 0; i < threadCount; i++) {
-  //      threads[i].join();
-  //    }
-  //  }
+      for (int i = 0; i < threadCount; i++) {
+        threads[i].join();
+      }
+    }
 
-  //  std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
-  //  std::chrono::duration<double> elapsed_time = endTime - start;
-  //  total_elapsed_time += elapsed_time;
-  //}
-  //else {
-  //  if (ioMethod == "tio") {
-  //    images.clear();
-  //    images.resize(numFrames);
-  //  }
+    std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_time = endTime - start;
+    total_elapsed_time += elapsed_time;
+  }
+  else {
+    if (ioMethod == "tio") {
+      images.clear();
+      physicalAddresses.clear();
+      images.resize(numFrames);
+      physicalAddresses.resize(numFrames);
+    }
 
-  //  doPass(passIndex * numFrames, 0, numFrames);
+    doPass(passIndex * numFrames, 0, numFrames);
 
-  //  if (ioMethod == "tio") {
-  //    std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
-  //    std::vector<std::thread> threads;
+    if (ioMethod == "tio") {
+      std::chrono::time_point<std::chrono::system_clock> savingStart = std::chrono::system_clock::now();
+      std::vector<std::thread> threads;
 
-  //    int threadWorkload = 0;
-  //    int remainder = 0;
+      int threadWorkload = 0;
+      int remainder = 0;
 
-  //    threadWorkload = numFrames / threadCount;
+      threadWorkload = numFrames / threadCount;
 
-  //    if (numFrames % threadCount != 0) {
-  //      remainder = numFrames - (threadWorkload * (threadCount - 1));
-  //    }
+      if (numFrames % threadCount != 0) {
+        remainder = numFrames - (threadWorkload * (threadCount - 1));
+      }
 
-  //    for (int i = 0; i < threadCount; i++) {
-  //      if (i == threadCount - 1 && remainder > 0) {
-  //        threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + remainder));
-  //      }
-  //      else {
-  //        threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + threadWorkload));
-  //      }
-  //    }
+      for (int i = 0; i < threadCount; i++) {
+        if (i == threadCount - 1 && remainder > 0) {
+          threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + remainder));
+        }
+        else {
+          threads.push_back(std::thread(&threadedFileSave, (passIndex * numFrames) + (i * threadWorkload), std::ref(directory), i * threadWorkload, (i * threadWorkload) + threadWorkload));
+        }
+      }
 
-  //    for (int i = 0; i < threadCount; i++) {
-  //      threads[i].join();
-  //    }
-  //    std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
-  //    std::chrono::duration<double> elapsed_time = endTime - savingStart;
-  //    total_elapsed_time += elapsed_time;
-  //  }
-  //}
+      for (int i = 0; i < threadCount; i++) {
+        threads[i].join();
+      }
+      std::chrono::time_point<std::chrono::system_clock> endTime = std::chrono::system_clock::now();
+      std::chrono::duration<double> elapsed_time = endTime - savingStart;
+      total_elapsed_time += elapsed_time;
+    }
+  }
 }
 
 void Pass::doPass(int passOffset, int startIndex, int endIndex) {
