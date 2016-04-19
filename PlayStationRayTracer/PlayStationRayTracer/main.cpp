@@ -88,6 +88,9 @@ int main(int argc, char **argv) {
       if (strcmp(argv[5], "-tf") == 0) {
         threadMethod = "tf";
       }
+      else if (strcmp(argv[5], "-fi") == 0) {
+        threadMethod = "fi";
+      }
       else {
         return -1;
       }

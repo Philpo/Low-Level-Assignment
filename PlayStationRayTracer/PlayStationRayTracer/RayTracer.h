@@ -48,9 +48,9 @@ extern std::mutex vectorMutex;
 //[/comment]
 #define MAX_RAY_DEPTH 5
 
-void* operator new[](size_t size);
+void* operator new[](size_t size, off_t& physicalAddress);
 
-void operator delete[](void* data, size_t size);
+void operator delete[](void* data, size_t size, off_t& physicalAddress);
 
 float mix(const float &a, const float &b, const float &mix);
 

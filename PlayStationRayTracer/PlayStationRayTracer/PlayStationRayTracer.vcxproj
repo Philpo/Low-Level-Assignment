@@ -71,7 +71,7 @@ copy /Y "$(SCE_ORBIS_SDK_DIR)\target\sce_module\libSceFios2.prx" "$(ProjectDir)\
       <AdditionalOptions>-fcxx-exceptions %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libSceFios2_stub_weak.a;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libSceFios2_stub_weak.a;libSceFiber_stub_weak.a;libSceSysmodule_stub_weak.a;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
