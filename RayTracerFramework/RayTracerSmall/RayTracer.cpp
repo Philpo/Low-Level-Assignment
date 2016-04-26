@@ -192,7 +192,7 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
     }
   }
   else {
-    fileSave(iteration, directory, true, image);
+    fileSave(iteration, directory, false, image);
   }
 }
 
