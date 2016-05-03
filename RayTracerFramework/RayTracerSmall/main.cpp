@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
     }
 
 		if (argc == 9) {
-			if (strcmp(argv[5], "-tf") == 0) {
-				threadMethod = "tf";
+			if (strcmp(argv[5], "-tm1") == 0) {
+				threadMethod = "tm1";
 			}
       else {
         return -1;
@@ -71,12 +71,12 @@ int main(int argc, char **argv) {
       }
 		}
 		else if (argc == 10) {
-			if (strcmp(argv[5], "-p") == 0) {
-				threadMethod = "p";
+			if (strcmp(argv[5], "-tm3") == 0) {
+				threadMethod = "tm3";
 				numThreads = convertStringToNumber<int>(argv[6]);
 			}
-			else if (strcmp(argv[5], "-tp") == 0) {
-				threadMethod = "tp";
+			else if (strcmp(argv[5], "-tm2") == 0) {
+				threadMethod = "tm2";
 				numThreads = convertStringToNumber<int>(argv[6]);
 			}
       else {

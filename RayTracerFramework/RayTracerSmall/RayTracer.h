@@ -57,13 +57,13 @@ float mix(const float &a, const float &b, const float &mix);
 Vec3f trace(const Vec3f &rayorig, const Vec3f &raydir, const std::vector<Sphere> &spheres, const int &depth, bool deferSaving);
 
 // renders an individual frame using one thread; the multi-threading aspect come from computing frames on multiple threads
-void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving);
+void threadMethod1(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving);
 
 // partition the screen into quarters and compute each partition using numThreads threads
-void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
+void threadMethod3(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
 // the screen is partitioned into numThreads partitions & each partition is computed on 1 thread
-void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving);
+void threadMethod2(int iteration, std::string& directory, int numThreads, bool deferSaving);
 
 void fileSave(int iteration, std::string& directory, bool upateTime, Vec3f*& image);
 

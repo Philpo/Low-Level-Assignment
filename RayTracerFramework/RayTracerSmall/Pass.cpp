@@ -16,7 +16,7 @@ Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::str
 }
 
 void Pass::render() {
-  if (threadMethod == "tf") {
+  if (threadMethod == "tm1") {
     std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     std::vector<std::thread> threads;
 
@@ -109,7 +109,7 @@ void Pass::render() {
 }
 
 void Pass::doPass(int passOffset, int startIndex, int endIndex) {
-  if (threadMethod == "tf") {
+  if (threadMethod == "tm1") {
     std::vector<Sphere> copy;
 
     for (Sphere sphere : spheres) {
@@ -125,7 +125,7 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
       for (auto move : moves) {
         move.doMove(copy[move.getTargetSphere()]);
       }
-      renderFrame(copy, iteration, directory, ioMethod == "tio");
+      threadMethod1(copy, iteration, directory, ioMethod == "tio");
       i++;
     }
 
@@ -140,11 +140,11 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
       for (auto move : moves) {
         move.doMove(spheres[move.getTargetSphere()]);
       }
-      if (threadMethod == "p") {
-        partitionAndRender(iteration, directory, threadCount, ioMethod == "tio");
+      if (threadMethod == "tm3") {
+        threadMethod3(iteration, directory, threadCount, ioMethod == "tio");
       }
       else {
-        threadPartitionRender(iteration, directory, threadCount, ioMethod == "tio");
+        threadMethod2(iteration, directory, threadCount, ioMethod == "tio");
       }
       i++;
     }
