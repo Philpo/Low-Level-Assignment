@@ -188,7 +188,7 @@ void partionedRender(int numThreads, int top, int width, int height, float invWi
 // trace it and return a color. If the ray hits a sphere, we return the color of the
 // sphere at the intersection point, else we return the background color.
 //[/comment]
-void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving) {
+void threadMethod1(const std::vector<Sphere> &spheres, int iteration, std::string& directory, bool deferSaving) {
   std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
 
   off_t physicalAddress;
@@ -230,7 +230,7 @@ void renderFrame(const std::vector<Sphere> &spheres, int iteration, std::string&
   }
 }
 
-void partitionAndRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
+void threadMethod3(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
   off_t physicalAddress;
@@ -278,7 +278,7 @@ void partitionAndRender(int iteration, std::string& directory, int numThreads, b
   }
 }
 
-void threadPartitionRender(int iteration, std::string& directory, int numThreads, bool deferSaving) {
+void threadMethod2(int iteration, std::string& directory, int numThreads, bool deferSaving) {
 	start = std::chrono::system_clock::now();
 
   off_t physicalAddress;

@@ -85,8 +85,8 @@ int main(int argc, char **argv) {
     }
 
     if (argc == 9) {
-      if (strcmp(argv[5], "-tf") == 0) {
-        threadMethod = "tf";
+      if (strcmp(argv[5], "-tm1") == 0) {
+        threadMethod = "tm1";
       }
       else if (strcmp(argv[5], "-fi") == 0) {
         threadMethod = "fi";
@@ -111,12 +111,12 @@ int main(int argc, char **argv) {
       }
     }
     else if (argc == 10) {
-      if (strcmp(argv[5], "-p") == 0) {
-        threadMethod = "p";
+      if (strcmp(argv[5], "-tm3") == 0) {
+        threadMethod = "tm3";
         numThreads = convertStringToNumber<int>(argv[6]);
       }
-      else if (strcmp(argv[5], "-tp") == 0) {
-        threadMethod = "tp";
+      else if (strcmp(argv[5], "-tm2") == 0) {
+        threadMethod = "tm2";
         numThreads = convertStringToNumber<int>(argv[6]);
       }
       else {
@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
     auto now = std::time(nullptr);
     std::ostringstream os;
     os << std::put_time(std::gmtime(&now), "%Y-%m-%d_%H%M%S");
-    directory = "/app0/spheres" + os.str();
+    directory = "/data/spheres" + os.str();
 
     std::vector<Pass> passes;
     int passCount = 0;

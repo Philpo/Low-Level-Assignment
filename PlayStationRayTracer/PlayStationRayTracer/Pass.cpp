@@ -20,7 +20,7 @@ Pass::Pass(xml_node<>* passNode, std::string& directory, int passIndex, std::str
 
 void Pass::render() {
   //doPass(0, 0, numFrames);
-  if (threadMethod == "tf") {
+  if (threadMethod == "tm1") {
     std::chrono::time_point<std::chrono::system_clock> start = std::chrono::system_clock::now();
     std::vector<std::thread> threads;
 
@@ -174,7 +174,7 @@ void Pass::threadedDoPass(int threadIndex, int passOffset, int startIndex, int e
       move.doMove(copy[move.getTargetSphere()]);
     }
 
-    renderFrame(copy, iteration, directory, ioMethod == "tio");
+    threadMethod1(copy, iteration, directory, ioMethod == "tio");
     i++;
   }
 
@@ -265,11 +265,11 @@ void Pass::doPass(int passOffset, int startIndex, int endIndex) {
     for (auto move : moves) {
       move.doMove(spheres[move.getTargetSphere()]);
     }
-    if (threadMethod == "p") {
-      partitionAndRender(iteration, directory, threadCount, ioMethod == "tio");
+    if (threadMethod == "tm3") {
+      threadMethod3(iteration, directory, threadCount, ioMethod == "tio");
     }
     else {
-      threadPartitionRender(iteration, directory, threadCount, ioMethod == "tio");
+      threadMethod2(iteration, directory, threadCount, ioMethod == "tio");
     }
     i++;
   }
@@ -289,7 +289,7 @@ void Pass::fiberEntryFollower(uint64_t argOnInitialize, uint64_t argOnRun) {
 
   Fiber* me = (Fiber*) argOnInitialize;
 
-  renderFrame(me->spheres, me->iteration, *me->directory, me->deferSaving);
+  threadMethod1(me->spheres, me->iteration, *me->directory, me->deferSaving);
   int32_t ret = sceFiberSwitch(me->nextFiber, (uint64_t) me, &argOnRun);
   assert(ret == SCE_OK);
 }

@@ -18,11 +18,7 @@ struct Fiber {
   bool deferSaving;
 };
 
-#ifdef _DEBUG
 const int CONTEXT_SIZE = 10000;
-#else
-const int CONTEXT_SIZE = 4000;
-#endif
 
 class Pass {
 public:
